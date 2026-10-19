@@ -38,6 +38,7 @@
     padTop: 40,
     padBottom: 34,
     fontScale: 1,           // 字号倍率（录制/大屏时可放大）
+    sideOffset: 0,          // 车底沿行进方向左侧的法线偏移（复线上下行分侧；0=贴线）
     showCaption: true,      // 底部操作说明（录制时可关）
     showLabels: true,
     showBlocked: false,      // 阻断车不参与绘制（与 Marey 图口径一致）
@@ -133,9 +134,22 @@
       ensureAdj(b.name).push({ to: a.name, geom: geom.slice().reverse(), length: length });
     }
     mainNodes.forEach(function (n, i) { if (i > 0) addEdge(mainNodes[i - 1], n, 'main'); });
+    // ---- 支线：同 branchOf 的站按 branch_order 串成链（父站 → order1 → order2 → …）----
+    // catalog 的 branch_of 是“示意挂接”，若按它直接连边，昔阳→平定 会绕道阳泉东，
+    // 车底在阳泉东—平定区间来回（徘徊）。实际线路是链：阳泉北—阳泉东—平定—昔阳。
+    var branchGroups = {};
     branchNodes.forEach(function (n) {
-      var parent = byStationName[n.branchOf];
-      addEdge(parent, n, n.link === 'connecting' ? 'connecting' : 'regional');
+      (branchGroups[n.branchOf] = branchGroups[n.branchOf] || []).push(n);
+    });
+    Object.keys(branchGroups).forEach(function (parentName) {
+      var chain = branchGroups[parentName].slice().sort(function (a, b) {
+        return (a.branchOrder || 0) - (b.branchOrder || 0);
+      });
+      var prevNode = byStationName[parentName];
+      chain.forEach(function (n) {
+        addEdge(prevNode, n, n.link === 'connecting' ? 'connecting' : 'regional');
+        prevNode = n;
+      });
     });
 
     var routeCache = {};
@@ -224,6 +238,7 @@
       list.push({
         segmentId: g.segment_id,
         type: g.segment_type,
+        detour: !!g.__detour,
         start: start,
         end: end,
         fromNode: fromNode,
@@ -292,12 +307,18 @@
             station: leg.fromStation
           };
         }
+        // 绕行区间（该车实际经由骨架外线路）：不显示车底，避免在逻辑线上被同向快车穿越
+        if (leg.detour) return { state: 'detour', x: null, y: null };
         var p = (t - leg.start) / (leg.end - leg.start);
         p = Math.max(0, Math.min(1, p));
         var pt = pointAlong(leg.path, p * leg.pathLength);
+        // 行进方向左侧法线（中国铁路靠左行车）：供上下行分侧绘制，对向车不再重叠相穿
+        var g0 = leg.path[0], g1 = leg.path[leg.path.length - 1];
+        var ddx = g1.x - g0.x, ddy = g1.y - g0.y, dl = Math.hypot(ddx, ddy) || 1;
         return {
           state: 'moving',
           x: pt.x, y: pt.y,
+          nx: ddy / dl, ny: -ddx / dl,
           legIndex: i, segmentId: leg.segmentId, progress: p,
           fromStation: leg.fromStation, toStation: leg.toStation
         };
@@ -342,6 +363,28 @@
     var segmentsByTrain = {};
     (data.segments || []).forEach(function (g) {
       (segmentsByTrain[g.train_id] = segmentsByTrain[g.train_id] || []).push(g);
+    });
+
+    // ---- 绕行段标记：走石太老线的普速车（停“太原(南)+石家庄北”但不停任何客专
+    // 中途站 阳泉北/井陉北），其 太原↔石家庄北 区间实际在骨架外的老线上绕行。
+    // 按真实时刻画在客专路径上会被同向快车反复穿越（“追尾”），标记 detour：
+    // 该区间不显示车底，仅显示其在骨架站的停站（待避/停靠画面不受影响）。
+    var oldLineTrain = {};
+    (data.trains || []).forEach(function (t) {
+      var names = {};
+      (t.stops || []).forEach(function (s) { names[s.station] = true; });
+      if (names['石家庄北'] && !names['阳泉北'] && !names['井陉北']) {
+        oldLineTrain[t.train_id] = true;
+      }
+    });
+    (data.segments || []).forEach(function (g) {
+      if (g.segment_type !== 'run' || !oldLineTrain[g.train_id]) return;
+      var f = (g.from_station_id || '').replace('st:', '');
+      var to = (g.to_station_id || '').replace('st:', '');
+      if ((f === '石家庄北' && (to === '太原' || to === '太原南')) ||
+          (to === '石家庄北' && (f === '太原' || f === '太原南'))) {
+        g.__detour = true;
+      }
     });
 
     var trains = data.trains
@@ -621,9 +664,11 @@
 
       items.forEach(function (it) {
         var g = it.g, pos = it.pos;
+        var side = (pos.nx || pos.ny) ? (opts.sideOffset || 0) : 0;   // 仅行进中的车分侧
         g.style.display = '';
         g.setAttribute('aria-hidden', 'false');
-        g.setAttribute('transform', 'translate(' + pos.x.toFixed(2) + ',' + pos.y.toFixed(2) + ')');
+        g.setAttribute('transform', 'translate(' + (pos.x + (pos.nx || 0) * side).toFixed(2) + ',' +
+          (pos.y + (pos.ny || 0) * side).toFixed(2) + ')');
         g.setAttribute('opacity', pos.state === 'terminal' ? 0.5 : 1);
         g.setAttribute('data-state', pos.state);
       });

@@ -45,7 +45,11 @@
   var $ = function (id) { return document.getElementById(id); };
 
   var q = new URLSearchParams(location.search);
-  function num(v, d) { var n = Number(v); return isFinite(n) ? n : d; }
+  function num(v, d) {
+    if (v === null || v === undefined || v === '') return d;
+    var n = Number(v);
+    return isFinite(n) ? n : d;
+  }
 
   var FROM = num(q.get('from'), 180);
   var TO = num(q.get('to'), 1920);
@@ -163,8 +167,8 @@
     if (lineH > 0) {
       diagram = window.LineDiagram.initLineDiagram(vl, data, {
         height: Math.round(lineH / ZOOM),
-        fontScale: 1,
         viewWidth: Math.round(availW / ZOOM),
+        sideOffset: 5,
         padTop: 30,
         padBottom: 24,
         showCaption: false

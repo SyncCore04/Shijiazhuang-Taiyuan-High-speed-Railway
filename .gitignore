@@ -27,6 +27,8 @@ npm-debug.log*
 *.log
 *.tmp
 ~$*
+石太客专运行图可视化项目：分阶段提示词工程.md
+PROGRESS-交接进度.md
 
 # ---- 编辑器 / 系统 ----
 .vscode/

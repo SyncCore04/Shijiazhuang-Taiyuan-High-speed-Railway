@@ -35,6 +35,27 @@ const { chromium } = require('playwright-core');
   });
   console.log('marey:', JSON.stringify(info));
 
+  const detourCheck = await page.evaluate(() => {
+    const LD = window.LineDiagram;
+    const layout = window.__rec.diagram().getLayout();
+    const byTrain = {};
+    window.__rec.data.segments.forEach(g => { (byTrain[g.train_id] = byTrain[g.train_id] || []).push(g); });
+    const r = {};
+    ['K892', 'K546', 'K585'].forEach(no => {
+      const t = window.__rec.data.trains.find(x => x.train_no === no);
+      const pack = LD.buildLegs(t, layout, byTrain[t.train_id] || []);
+      let moving = 0, detour = 0;
+      for (let t0 = pack.firstStart; t0 <= pack.lastEnd; t0 += 3) {
+        const p = LD.computePosition(pack, t0);
+        if (p.state === 'detour') detour++;
+        if (p.state === 'moving') moving++;
+      }
+      r[no] = { moving, detour, flips: 0 };
+    });
+    return r;
+  });
+  console.log('detour-check:', JSON.stringify(detourCheck));
+
   await page.click('button[data-mode="both"]');
   await page.waitForTimeout(700);
   await page.mouse.move(900, 500);

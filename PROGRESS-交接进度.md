@@ -271,6 +271,7 @@ train_no,direction,train_type,station_order,station,arr_time,dep_time,day_offset
 - **播放边界**：进度拖到终点自动停、播完再按播放从头开始，沿用 `player.js` 既有语义；按任意键会唤醒控制条。
 - **录制可读性二调**（用户反馈"线条太细、站名太小"）：`zoom` 默认 2→3（车底 30px / 轨道 27px / 站名 36px），CSS 再加粗轨道（main 9 / branch 7 / connecting 5 逻辑宽度）；左上角常驻 72px 大号当前时刻（`bigtime=0` 可关，跨日自动标「次日」，不随控件隐去）。
 - **防重叠**：Marey 加 `showLegend` 选项（录制页关图例，`margin.top` 加到 100 让位）；CSS 隐藏线路内建图例 `.ld-legend` 与 Marey 光标小时刻（`.mc-cursor rect/text`，只留竖线）——时间信息统一由左上角大时刻承担。
+- **动画两 bug 修复**（用户报告）：① K585 在阳泉东—平定"徘徊"——根因是 catalog 的 `branch_of` 为放射挂接（平定/昔阳都挂阳泉东），`buildLayout` 按它建边后 昔阳→平定 无直达边，BFS 绕道阳泉东形成 V 形几何；修复=支线按同父 `branch_order` 串成链（阳泉北—阳泉东—平定—宁艾—昔阳）。② 石太客专"列车追尾"——数据层同向区间超越实测为 0，真因有二：(a) 走石太老线的普速车（K892/K546 等，停太原+石家庄北但不停阳泉北/井陉北）的 太原↔石家庄北 长段被 BFS 分配到客专路径、按老线绕行时刻绘制，被快车反复穿越——修复=标记 `__detour`，该区间不显示车底（其在骨架站的停站/待避照常显示）；(b) 复线上下行画在同一轨道，对向车相向对穿——修复=车底按行进方向左侧法线偏移分侧（`sideOffset`，默认 0 不影响 index.html，录制页 5）。另修 `num()` 对 `Number(null)=0` 的 bug——`zoom`/`fs` 参数此前从未生效。
 - **枢纽站主题化**（用户指定）：CSS 按 `.ld-station[data-station=…]` 覆盖六站站名——字号 ×2（逻辑 24px→显示 72px）+ 白描边防压线；配色 太原/太原南=#1e3a8a 深蓝、石家庄/石家庄北=#14532d 深绿、阳泉北/阳泉东=#c2410c 深红（沿用阳泉北高亮色）。纯 CSS 实现（SVG presentation attribute 可被 CSS 覆盖），index.html 不受影响。
 - **验收**：`scripts/test_record.mjs`（playwright 截图 + 行为断言：155 车渲染、双图尺寸、播放推进、边界停、H 键锁定、自动隐藏）全部通过；index 43 项 E2E 无回归。
 - **一键启动**：根目录 `start.bat`（**GBK 编码保存**，UTF-8 中文 bat 在 cmd 下会解析错乱）。自动找可用 Python（绕开 Store 占位程序）、检测端口占用（已占用则只开浏览器）、`record`/端口参数。实测 8010 端口 200。
