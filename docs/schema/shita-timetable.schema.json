@@ -1,0 +1,1209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.shita-timetable/schema/shita-timetable.schema.json",
+  "title": "石太客专+阳大铁路 运行图数据契约",
+  "description": "前端唯一消费的数据契约 v2.0.0。真实数据与 synthetic 测试数据共用本 Schema，靠 meta.data_kind 区分。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "meta",
+    "provenance",
+    "stations",
+    "trains",
+    "segments",
+    "warnings",
+    "stats"
+  ],
+  "properties": {
+    "meta": {
+      "$ref": "#/$defs/meta"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "stations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/station"
+      }
+    },
+    "trains": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/train"
+      }
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/segment"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/warning"
+      }
+    },
+    "stats": {
+      "$ref": "#/$defs/stats"
+    }
+  },
+  "$defs": {
+    "hhmm": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+      "description": "原始 24 小时制 HH:mm；缺失为 null，禁止 24:00 及以上写法"
+    },
+    "absMinute": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "绝对分钟 = minute_of_day + day_offset*1440；缺失为 null。可为负：表示该站时刻在基准服务日 00:00 之前（如跨日长途车在前一日始发），前端只绘制时间域内的部分"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "dataset_id",
+        "data_version",
+        "history_version",
+        "history_status",
+        "data_kind",
+        "generated_at",
+        "build_id",
+        "time_unit",
+        "timezone",
+        "time_origin",
+        "source_summary",
+        "coverage",
+        "validation_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "dataset_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "history_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "历史存档版本号；本项目为现行图，非历史存档，故为 null"
+        },
+        "history_status": {
+          "type": "string",
+          "enum": [
+            "current_timetable_not_archive",
+            "archived_snapshot"
+          ]
+        },
+        "data_kind": {
+          "type": "string",
+          "enum": [
+            "real",
+            "synthetic"
+          ],
+          "description": "real=真实采集数据；synthetic=测试模拟数据。两者禁止混用"
+        },
+        "generated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "构建时刻。为保证字节级可复现，本数据集写 null，构建时刻见 cleaning_log"
+        },
+        "generated_at_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "build_id": {
+          "type": "string",
+          "description": "确定性构建标识（输入 SHA-256 前 12 位 + 清洗器版本），不含时钟"
+        },
+        "time_unit": {
+          "type": "string",
+          "enum": [
+            "minute"
+          ]
+        },
+        "timezone": {
+          "type": "string",
+          "enum": [
+            "Asia/Shanghai"
+          ]
+        },
+        "time_origin": {
+          "type": "string",
+          "description": "绝对分钟 0 点的定义，例如 基准服务日 00:00（2026-10-20）"
+        },
+        "source_summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "primary",
+            "access_date",
+            "query_date",
+            "official_verification",
+            "cross_check"
+          ],
+          "properties": {
+            "primary": {
+              "type": "string"
+            },
+            "access_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "query_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "official_verification": {
+              "type": "string"
+            },
+            "cross_check": {
+              "type": "string"
+            }
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "service_date",
+            "abs_minute_min",
+            "abs_minute_max",
+            "trains_total",
+            "stations_total",
+            "lines"
+          ],
+          "properties": {
+            "service_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "abs_minute_min": {
+              "type": "integer"
+            },
+            "abs_minute_max": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "trains_total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "stations_total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "validation_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "usable_trains",
+            "blocked_trains",
+            "open_warnings"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "pass",
+                "pass_with_open_reviews",
+                "fail"
+              ]
+            },
+            "usable_trains": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "blocked_trains": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "open_warnings": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "csv",
+        "cleaner",
+        "documents",
+        "caveats"
+      ],
+      "properties": {
+        "csv": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file",
+            "sha256",
+            "bytes",
+            "rows",
+            "encoding",
+            "line_endings",
+            "header"
+          ],
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rows": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "encoding": {
+              "type": "string"
+            },
+            "line_endings": {
+              "type": "string"
+            },
+            "header": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 11,
+              "maxItems": 11
+            }
+          }
+        },
+        "cleaner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "script",
+            "version"
+          ],
+          "properties": {
+            "script": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "role"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "station": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "station_id",
+        "name",
+        "in_dataset",
+        "is_corridor",
+        "is_highlighted",
+        "km",
+        "station_order",
+        "corridor_ids",
+        "source",
+        "notes",
+        "stats",
+        "place"
+      ],
+      "properties": {
+        "station_id": {
+          "type": "string",
+          "pattern": "^st:.+$",
+          "description": "稳定 ID：st:+站名（含中文）。仅作 Map 键，不用于 CSS 选择器，不依赖数组下标"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "in_dataset": {
+          "type": "boolean",
+          "description": "是否在本次 CSV 中出现"
+        },
+        "is_corridor": {
+          "type": "boolean",
+          "description": "是否属于石太/阳大目标通道"
+        },
+        "is_highlighted": {
+          "type": "boolean",
+          "description": "图上是否高亮（阳泉北）"
+        },
+        "km": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "真实里程公里数；第三方无里程，一律 null，禁止用站序冒充"
+        },
+        "station_order": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "全局站序无定义，恒为 null；逐车次站序见 trains[].stops[].station_order"
+        },
+        "corridor_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "docs/stations.md 中的 station_id，如 yqbei"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "docs/stations.md",
+            "csv"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stats": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stop_records",
+            "train_types"
+          ],
+          "properties": {
+            "stop_records": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "train_types": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "place": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "示意坐标与线路挂接；通道外站点为 null。坐标为归一化示意值，不是经纬度",
+          "additionalProperties": false,
+          "required": [
+            "line",
+            "sequence",
+            "x",
+            "y",
+            "role",
+            "branch_of",
+            "branch_order",
+            "link",
+            "label"
+          ],
+          "properties": {
+            "line": {
+              "type": "string",
+              "enum": [
+                "shita",
+                "yangda"
+              ]
+            },
+            "sequence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1,
+              "description": "沿线顺序（西→东）；支线站为 null"
+            },
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "0=最西，1=最东"
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "0=最北，1=最南"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "endpoint_east",
+                "endpoint_west",
+                "intermediate",
+                "junction",
+                "branch_intermediate",
+                "branch_terminal"
+              ]
+            },
+            "branch_of": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "所属支线的接轨站名；主线站为 null"
+            },
+            "branch_order": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "link": {
+              "type": "string",
+              "enum": [
+                "main",
+                "connecting",
+                "regional"
+              ],
+              "description": "main=正线；connecting=联络线；regional=支线"
+            },
+            "label": {
+              "type": "string",
+              "enum": [
+                "above",
+                "below",
+                "left",
+                "right"
+              ],
+              "description": "站名放置方向提示"
+            }
+          }
+        }
+      },
+      "description": "站点主数据。place 为示意图坐标与线路挂接（v2.0.0 起取代 line_positions）"
+    },
+    "train": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "train_id",
+        "train_no",
+        "direction",
+        "train_type",
+        "service_status",
+        "origin",
+        "terminal",
+        "station_count",
+        "first_dep_abs_minute",
+        "last_arr_abs_minute",
+        "duration_minutes",
+        "has_day_offset",
+        "validation",
+        "remarks",
+        "source_refs",
+        "stops"
+      ],
+      "properties": {
+        "train_id": {
+          "type": "string",
+          "pattern": "^tr:.+$"
+        },
+        "train_no": {
+          "type": "string",
+          "minLength": 1
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "up",
+            "down",
+            "unknown"
+          ]
+        },
+        "train_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "service_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "basis"
+          ],
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "normal",
+                "alternate_day",
+                "unknown"
+              ]
+            },
+            "basis": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "判定依据，如 remark 含「隔日规律」"
+            }
+          }
+        },
+        "origin": {
+          "type": "string"
+        },
+        "terminal": {
+          "type": "string"
+        },
+        "station_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "first_dep_abs_minute": {
+          "$ref": "#/$defs/absMinute"
+        },
+        "last_arr_abs_minute": {
+          "$ref": "#/$defs/absMinute"
+        },
+        "duration_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "description": "last_arr - first_dep；绝对分钟不单调时为 null"
+        },
+        "has_day_offset": {
+          "type": "boolean"
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "usable_for_frontend",
+            "blocking_issue_count",
+            "warning_count",
+            "flags"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "validated",
+                "validated_with_notes",
+                "needs_review"
+              ]
+            },
+            "usable_for_frontend": {
+              "type": "boolean"
+            },
+            "blocking_issue_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "warning_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "flags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "remarks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "车次级备注。本批未做二次归纳，保留 stop 级原文，故为空数组"
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "url",
+              "accessed"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "pattern": "^https?://"
+              },
+              "accessed": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "stops": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/stop"
+          }
+        }
+      }
+    },
+    "stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "station_order",
+        "station",
+        "station_id",
+        "arr_time",
+        "dep_time",
+        "minute_of_day",
+        "abs_minute",
+        "day_offset",
+        "day_offset_imputed",
+        "km",
+        "is_stop",
+        "stop_kind",
+        "dwell_minutes",
+        "remark",
+        "source_row",
+        "flags"
+      ],
+      "properties": {
+        "station_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "station": {
+          "type": "string",
+          "minLength": 1
+        },
+        "station_id": {
+          "type": "string",
+          "pattern": "^st:.+$"
+        },
+        "arr_time": {
+          "$ref": "#/$defs/hhmm"
+        },
+        "dep_time": {
+          "$ref": "#/$defs/hhmm"
+        },
+        "minute_of_day": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "arr",
+            "dep"
+          ],
+          "properties": {
+            "arr": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1439
+            },
+            "dep": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1439
+            }
+          }
+        },
+        "abs_minute": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "arr",
+            "dep"
+          ],
+          "properties": {
+            "arr": {
+              "$ref": "#/$defs/absMinute"
+            },
+            "dep": {
+              "$ref": "#/$defs/absMinute"
+            }
+          }
+        },
+        "day_offset": {
+          "type": "integer",
+          "description": "相对基准服务日 2026-10-20 的天数偏移；可为负（服务日之前），如跨日长途车前一日始发"
+        },
+        "day_offset_imputed": {
+          "type": "boolean"
+        },
+        "km": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "is_stop": {
+          "type": "boolean"
+        },
+        "stop_kind": {
+          "type": "string",
+          "enum": [
+            "origin",
+            "terminal",
+            "stop",
+            "pass"
+          ]
+        },
+        "dwell_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "remark": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_row": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "segment_id",
+        "train_id",
+        "train_no",
+        "segment_type",
+        "from_station_id",
+        "to_station_id",
+        "from_station_order",
+        "to_station_order",
+        "from_dep_time",
+        "to_arr_time",
+        "departure_abs_minute",
+        "arrival_abs_minute",
+        "from_km",
+        "to_km",
+        "duration_minutes",
+        "data_quality"
+      ],
+      "properties": {
+        "segment_id": {
+          "type": "string",
+          "pattern": "^sg:.+$"
+        },
+        "train_id": {
+          "type": "string",
+          "pattern": "^tr:.+$"
+        },
+        "train_no": {
+          "type": "string"
+        },
+        "segment_type": {
+          "type": "string",
+          "enum": [
+            "run",
+            "dwell",
+            "unknown"
+          ],
+          "description": "run=相邻两站运行；dwell=同站停站；unknown=时刻缺失无法判定"
+        },
+        "from_station_id": {
+          "type": "string",
+          "pattern": "^st:.+$"
+        },
+        "to_station_id": {
+          "type": "string",
+          "pattern": "^st:.+$"
+        },
+        "from_station_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "to_station_order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "from_dep_time": {
+          "$ref": "#/$defs/hhmm"
+        },
+        "to_arr_time": {
+          "$ref": "#/$defs/hhmm"
+        },
+        "departure_abs_minute": {
+          "$ref": "#/$defs/absMinute"
+        },
+        "arrival_abs_minute": {
+          "$ref": "#/$defs/absMinute"
+        },
+        "from_km": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "to_km": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "duration_minutes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "data_quality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "flags"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "review",
+                "incomplete"
+              ]
+            },
+            "flags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "warning_id",
+        "code",
+        "severity",
+        "message",
+        "train_id",
+        "train_no",
+        "station_id",
+        "station_order",
+        "station",
+        "row",
+        "evidence",
+        "frontend_impact",
+        "doc_ref",
+        "status"
+      ],
+      "properties": {
+        "warning_id": {
+          "type": "string",
+          "pattern": "^RV-[0-9]{3}$"
+        },
+        "code": {
+          "type": "string",
+          "enum": [
+            "CROSSING_UNRESOLVED",
+            "CROSSING_NOT_REPRODUCED",
+            "SOURCE_CONFLICT",
+            "DIRECTION_REVIEW",
+            "ROUTE_PENDING",
+            "STATION_NAME_MISMATCH",
+            "STATION_CATALOG_CONFLICT",
+            "DUPLICATE_ORDER_CONFLICT",
+            "STATION_ORDER_GAP",
+            "TIME_REVERSAL",
+            "DEP_BEFORE_ARR",
+            "MISSING_TIME",
+            "MISSING_FIELD",
+            "INVALID_TIME",
+            "INVALID_DIRECTION",
+            "BOUNDARY_RULE",
+            "DUPLICATE_ROW",
+            "EXCLUDED_UNVERIFIED",
+            "EXCLUDED_SUSPENDED",
+            "OTHER"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "block",
+            "warn",
+            "info",
+            "excluded"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "train_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^tr:.+$"
+        },
+        "train_no": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "station_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^st:.+$"
+        },
+        "station_order": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "station": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "row": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 2
+        },
+        "evidence": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "frontend_impact": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "doc_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "open",
+            "resolved",
+            "waived"
+          ]
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trains",
+        "usable_trains",
+        "blocked_trains",
+        "trains_with_notes",
+        "stations",
+        "stations_in_dataset",
+        "stop_records",
+        "segments",
+        "warnings",
+        "km_missing_stops",
+        "direction",
+        "day_offset_stops"
+      ],
+      "properties": {
+        "trains": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "usable_trains": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked_trains": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trains_with_notes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stations_in_dataset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stop_records": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "segments": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total",
+            "block",
+            "warn",
+            "info",
+            "excluded"
+          ],
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "block": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "warn": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "info": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "excluded": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "km_missing_stops": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "direction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "up",
+            "down",
+            "unknown"
+          ],
+          "properties": {
+            "up": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "down": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unknown": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "day_offset_stops": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

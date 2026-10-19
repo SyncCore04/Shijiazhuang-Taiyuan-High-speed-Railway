@@ -1,0 +1,2195 @@
+{
+  "v1_trains": 92,
+  "v2_trains": 159,
+  "common": 88,
+  "added": [
+    "D1151",
+    "D1152",
+    "D1632",
+    "D1652",
+    "D1654",
+    "D1658",
+    "D1666",
+    "D1668",
+    "D265",
+    "D267",
+    "D269",
+    "D270",
+    "D2778",
+    "D2780",
+    "D41",
+    "D42",
+    "G1952",
+    "G1954",
+    "G2602",
+    "G2604",
+    "G2619",
+    "G2638",
+    "G379",
+    "G380",
+    "G551",
+    "G603",
+    "G604",
+    "G605",
+    "G609",
+    "G612",
+    "G613",
+    "G614",
+    "G615",
+    "G616",
+    "G618",
+    "G625",
+    "G681",
+    "G682",
+    "K1115",
+    "K1332",
+    "K1396",
+    "K1398",
+    "K1574",
+    "K1805",
+    "K1806",
+    "K214",
+    "K546",
+    "K548",
+    "K566",
+    "K610",
+    "K729",
+    "K868",
+    "K882",
+    "K884",
+    "K891",
+    "K892",
+    "K978",
+    "K980",
+    "T175",
+    "T176",
+    "T192",
+    "T194",
+    "Z196",
+    "Z21",
+    "Z22",
+    "Z356",
+    "Z358",
+    "Z56"
+  ],
+  "removed": [
+    "D918"
+  ],
+  "identical": [
+    "C799",
+    "C800",
+    "D1095",
+    "D1096",
+    "D15",
+    "D16",
+    "D1629",
+    "D1630",
+    "D1634",
+    "D1637",
+    "D1638",
+    "D1641",
+    "D1642",
+    "D1645",
+    "D1646",
+    "D1649",
+    "D1650",
+    "D1657",
+    "D1665",
+    "D1670",
+    "D1671",
+    "D1672",
+    "D1675",
+    "D1676",
+    "D69",
+    "D70",
+    "D917",
+    "G1862",
+    "G1956",
+    "G2605",
+    "G2606",
+    "G2609",
+    "G2610",
+    "G2620",
+    "G3385",
+    "G3386",
+    "G601",
+    "G602",
+    "G606",
+    "G607",
+    "G608",
+    "G610",
+    "G611",
+    "G620",
+    "G621",
+    "G622",
+    "G623",
+    "G624",
+    "G626",
+    "G627",
+    "G628",
+    "G629",
+    "G683",
+    "G684",
+    "G791",
+    "G792",
+    "K1117",
+    "K1331",
+    "K1572",
+    "K213",
+    "K373",
+    "K374",
+    "K565",
+    "K585",
+    "K587",
+    "K609",
+    "K730",
+    "K866",
+    "S951",
+    "S952",
+    "S953",
+    "S954",
+    "S955",
+    "S956",
+    "S957",
+    "S958",
+    "S959",
+    "S960",
+    "S961",
+    "S962",
+    "S963",
+    "S964",
+    "S965",
+    "S966",
+    "Z198",
+    "Z267",
+    "Z268",
+    "Z55"
+  ],
+  "time_changed": [],
+  "diffs": [
+    {
+      "train_no": "C799",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "阳泉东",
+        "stops": 5,
+        "duration": 267,
+        "direction": "down",
+        "train_type": "城际"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "阳泉东",
+        "stops": 5,
+        "duration": 267,
+        "direction": "down",
+        "train_type": "城际"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "C800",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 251,
+        "direction": "up",
+        "train_type": "城际"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 251,
+        "direction": "up",
+        "train_type": "城际"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1095",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "太原南",
+        "stops": 2,
+        "duration": 87,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "太原南",
+        "stops": 2,
+        "duration": 87,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1096",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "阳泉东",
+        "stops": 3,
+        "duration": 110,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "阳泉东",
+        "stops": 3,
+        "duration": 110,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D15",
+      "v1": {
+        "origin": "北京西",
+        "terminal": "成都东",
+        "stops": 15,
+        "duration": 1278,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "北京西",
+        "terminal": "成都东",
+        "stops": 15,
+        "duration": 1278,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D16",
+      "v1": {
+        "origin": "成都东",
+        "terminal": "北京西",
+        "stops": 15,
+        "duration": 1239,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "成都东",
+        "terminal": "北京西",
+        "stops": 15,
+        "duration": 1239,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1629",
+      "v1": {
+        "origin": "大同南",
+        "terminal": "济南东",
+        "stops": 11,
+        "duration": 335,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "大同南",
+        "terminal": "济南东",
+        "stops": 11,
+        "duration": 335,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1630",
+      "v1": {
+        "origin": "济南东",
+        "terminal": "大同南",
+        "stops": 18,
+        "duration": 426,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "济南东",
+        "terminal": "大同南",
+        "stops": 18,
+        "duration": 426,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1634",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "青岛北",
+        "stops": 11,
+        "duration": 366,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "青岛北",
+        "stops": 11,
+        "duration": 366,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1637",
+      "v1": {
+        "origin": "青岛",
+        "terminal": "西安北",
+        "stops": 25,
+        "duration": 638,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "青岛",
+        "terminal": "西安北",
+        "stops": 25,
+        "duration": 638,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1638",
+      "v1": {
+        "origin": "西安北",
+        "terminal": "青岛",
+        "stops": 23,
+        "duration": 631,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "西安北",
+        "terminal": "青岛",
+        "stops": 23,
+        "duration": 631,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1641",
+      "v1": {
+        "origin": "青岛北",
+        "terminal": "运城北",
+        "stops": 13,
+        "duration": 483,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "青岛北",
+        "terminal": "运城北",
+        "stops": 13,
+        "duration": 483,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1642",
+      "v1": {
+        "origin": "运城北",
+        "terminal": "青岛北",
+        "stops": 20,
+        "duration": 551,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "运城北",
+        "terminal": "青岛北",
+        "stops": 20,
+        "duration": 551,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1645",
+      "v1": {
+        "origin": "济南西",
+        "terminal": "运城北",
+        "stops": 19,
+        "duration": 429,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "济南西",
+        "terminal": "运城北",
+        "stops": 19,
+        "duration": 429,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1646",
+      "v1": {
+        "origin": "运城北",
+        "terminal": "济南西",
+        "stops": 11,
+        "duration": 341,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "运城北",
+        "terminal": "济南西",
+        "stops": 11,
+        "duration": 341,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1649",
+      "v1": {
+        "origin": "威海",
+        "terminal": "运城北",
+        "stops": 19,
+        "duration": 613,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "威海",
+        "terminal": "运城北",
+        "stops": 19,
+        "duration": 613,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1650",
+      "v1": {
+        "origin": "运城北",
+        "terminal": "威海",
+        "stops": 21,
+        "duration": 599,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "运城北",
+        "terminal": "威海",
+        "stops": 21,
+        "duration": 599,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1657",
+      "v1": {
+        "origin": "青岛北",
+        "terminal": "呼和浩特东",
+        "stops": 20,
+        "duration": 604,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "青岛北",
+        "terminal": "呼和浩特东",
+        "stops": 20,
+        "duration": 604,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1665",
+      "v1": {
+        "origin": "南通",
+        "terminal": "太原南",
+        "stops": 24,
+        "duration": 624,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "南通",
+        "terminal": "太原南",
+        "stops": 24,
+        "duration": 624,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1670",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "苏州",
+        "stops": 23,
+        "duration": 612,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "苏州",
+        "stops": 23,
+        "duration": 612,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1671",
+      "v1": {
+        "origin": "青岛",
+        "terminal": "兰州西",
+        "stops": 27,
+        "duration": 817,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "青岛",
+        "terminal": "兰州西",
+        "stops": 27,
+        "duration": 817,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1672",
+      "v1": {
+        "origin": "兰州西",
+        "terminal": "青岛北",
+        "stops": 24,
+        "duration": 800,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "兰州西",
+        "terminal": "青岛北",
+        "stops": 24,
+        "duration": 800,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1675",
+      "v1": {
+        "origin": "烟台",
+        "terminal": "西安北",
+        "stops": 22,
+        "duration": 596,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "烟台",
+        "terminal": "西安北",
+        "stops": 22,
+        "duration": 596,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D1676",
+      "v1": {
+        "origin": "西安北",
+        "terminal": "烟台",
+        "stops": 24,
+        "duration": 641,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "西安北",
+        "terminal": "烟台",
+        "stops": 24,
+        "duration": 641,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D69",
+      "v1": {
+        "origin": "北京西",
+        "terminal": "乌鲁木齐",
+        "stops": 15,
+        "duration": 1790,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "北京西",
+        "terminal": "乌鲁木齐",
+        "stops": 15,
+        "duration": 1790,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D70",
+      "v1": {
+        "origin": "乌鲁木齐",
+        "terminal": "北京西",
+        "stops": 15,
+        "duration": 1773,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "乌鲁木齐",
+        "terminal": "北京西",
+        "stops": 15,
+        "duration": 1773,
+        "direction": "up",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "D917",
+      "v1": {
+        "origin": "深圳坪山",
+        "terminal": "太原南",
+        "stops": 9,
+        "duration": 788,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "v2": {
+        "origin": "深圳坪山",
+        "terminal": "太原南",
+        "stops": 9,
+        "duration": 788,
+        "direction": "down",
+        "train_type": "动车"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G1862",
+      "v1": {
+        "origin": "杭州西",
+        "terminal": "太原南",
+        "stops": 20,
+        "duration": 514,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "杭州西",
+        "terminal": "太原南",
+        "stops": 20,
+        "duration": 514,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G1956",
+      "v1": {
+        "origin": "上海虹桥",
+        "terminal": "太原南",
+        "stops": 19,
+        "duration": 582,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "上海虹桥",
+        "terminal": "太原南",
+        "stops": 19,
+        "duration": 582,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G2605",
+      "v1": {
+        "origin": "秦皇岛",
+        "terminal": "太原南",
+        "stops": 12,
+        "duration": 314,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "秦皇岛",
+        "terminal": "太原南",
+        "stops": 12,
+        "duration": 314,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G2606",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "秦皇岛",
+        "stops": 14,
+        "duration": 332,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "秦皇岛",
+        "stops": 14,
+        "duration": 332,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G2609",
+      "v1": {
+        "origin": "天津西",
+        "terminal": "太原南",
+        "stops": 7,
+        "duration": 200,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "天津西",
+        "terminal": "太原南",
+        "stops": 7,
+        "duration": 200,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G2610",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "天津西",
+        "stops": 7,
+        "duration": 210,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "天津西",
+        "stops": 7,
+        "duration": 210,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G2620",
+      "v1": {
+        "origin": "运城北",
+        "terminal": "天津西",
+        "stops": 15,
+        "duration": 371,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "运城北",
+        "terminal": "天津西",
+        "stops": 15,
+        "duration": 371,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G3385",
+      "v1": {
+        "origin": "扬州",
+        "terminal": "呼和浩特东",
+        "stops": 22,
+        "duration": 633,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "扬州",
+        "terminal": "呼和浩特东",
+        "stops": 22,
+        "duration": 633,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G3386",
+      "v1": {
+        "origin": "呼和浩特东",
+        "terminal": "扬州",
+        "stops": 22,
+        "duration": 684,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "呼和浩特东",
+        "terminal": "扬州",
+        "stops": 22,
+        "duration": 684,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G601",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 175,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 175,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G602",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 6,
+        "duration": 182,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 6,
+        "duration": 182,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G606",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 183,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 183,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G607",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 176,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 176,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G608",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 181,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 181,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G610",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 6,
+        "duration": 193,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 6,
+        "duration": 193,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G611",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 165,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 165,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G620",
+      "v1": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 179,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "太原南",
+        "terminal": "北京丰台",
+        "stops": 5,
+        "duration": 179,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G621",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "临汾西",
+        "stops": 10,
+        "duration": 285,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "临汾西",
+        "stops": 10,
+        "duration": 285,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G622",
+      "v1": {
+        "origin": "运城北",
+        "terminal": "北京丰台",
+        "stops": 13,
+        "duration": 348,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "运城北",
+        "terminal": "北京丰台",
+        "stops": 13,
+        "duration": 348,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G623",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 168,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 5,
+        "duration": 168,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G624",
+      "v1": {
+        "origin": "临汾西",
+        "terminal": "北京丰台",
+        "stops": 9,
+        "duration": 299,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "临汾西",
+        "terminal": "北京丰台",
+        "stops": 9,
+        "duration": 299,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G626",
+      "v1": {
+        "origin": "运城北",
+        "terminal": "北京丰台",
+        "stops": 14,
+        "duration": 359,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "运城北",
+        "terminal": "北京丰台",
+        "stops": 14,
+        "duration": 359,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G627",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "运城北",
+        "stops": 12,
+        "duration": 336,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "运城北",
+        "stops": 12,
+        "duration": 336,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G628",
+      "v1": {
+        "origin": "永济北",
+        "terminal": "北京丰台",
+        "stops": 12,
+        "duration": 364,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "永济北",
+        "terminal": "北京丰台",
+        "stops": 12,
+        "duration": 364,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G629",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 6,
+        "duration": 186,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "太原南",
+        "stops": 6,
+        "duration": 186,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G683",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "晋城东",
+        "stops": 10,
+        "duration": 299,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "晋城东",
+        "stops": 10,
+        "duration": 299,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G684",
+      "v1": {
+        "origin": "晋城东",
+        "terminal": "北京丰台",
+        "stops": 10,
+        "duration": 295,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "晋城东",
+        "terminal": "北京丰台",
+        "stops": 10,
+        "duration": 295,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G791",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "介休东",
+        "stops": 7,
+        "duration": 218,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "介休东",
+        "stops": 7,
+        "duration": 218,
+        "direction": "down",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "G792",
+      "v1": {
+        "origin": "介休东",
+        "terminal": "北京丰台",
+        "stops": 8,
+        "duration": 243,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "v2": {
+        "origin": "介休东",
+        "terminal": "北京丰台",
+        "stops": 8,
+        "duration": 243,
+        "direction": "up",
+        "train_type": "高铁"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K1117",
+      "v1": {
+        "origin": "包头",
+        "terminal": "北京丰台",
+        "stops": 12,
+        "duration": 911,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "包头",
+        "terminal": "北京丰台",
+        "stops": 12,
+        "duration": 911,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K1331",
+      "v1": {
+        "origin": "银川",
+        "terminal": "昆山",
+        "stops": 22,
+        "duration": 1693,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "银川",
+        "terminal": "昆山",
+        "stops": 22,
+        "duration": 1693,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K1572",
+      "v1": {
+        "origin": "吉林",
+        "terminal": "西安",
+        "stops": 36,
+        "duration": 2019,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "吉林",
+        "terminal": "西安",
+        "stops": 36,
+        "duration": 2019,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K213",
+      "v1": {
+        "origin": "天津",
+        "terminal": "西安",
+        "stops": 14,
+        "duration": 1053,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "天津",
+        "terminal": "西安",
+        "stops": 14,
+        "duration": 1053,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K373",
+      "v1": {
+        "origin": "上海",
+        "terminal": "大同",
+        "stops": 21,
+        "duration": 47,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "上海",
+        "terminal": "大同",
+        "stops": 21,
+        "duration": 1487,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K374",
+      "v1": {
+        "origin": "大同",
+        "terminal": "上海",
+        "stops": 21,
+        "duration": 75,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "大同",
+        "terminal": "上海",
+        "stops": 21,
+        "duration": 1515,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K565",
+      "v1": {
+        "origin": "海门",
+        "terminal": "太原",
+        "stops": 17,
+        "duration": null,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "海门",
+        "terminal": "太原",
+        "stops": 17,
+        "duration": 1198,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K585",
+      "v1": {
+        "origin": "左权",
+        "terminal": "太原",
+        "stops": 7,
+        "duration": 274,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "左权",
+        "terminal": "太原",
+        "stops": 7,
+        "duration": 274,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K587",
+      "v1": {
+        "origin": "太原",
+        "terminal": "左权",
+        "stops": 7,
+        "duration": 278,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "太原",
+        "terminal": "左权",
+        "stops": 7,
+        "duration": 278,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K609",
+      "v1": {
+        "origin": "北京丰台",
+        "terminal": "韩城",
+        "stops": 19,
+        "duration": null,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "北京丰台",
+        "terminal": "韩城",
+        "stops": 19,
+        "duration": 912,
+        "direction": "down",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K730",
+      "v1": {
+        "origin": "大同",
+        "terminal": "广州白云",
+        "stops": 31,
+        "duration": null,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "大同",
+        "terminal": "广州白云",
+        "stops": 31,
+        "duration": 2295,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "K866",
+      "v1": {
+        "origin": "运城",
+        "terminal": "秦皇岛",
+        "stops": 27,
+        "duration": null,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "v2": {
+        "origin": "运城",
+        "terminal": "秦皇岛",
+        "stops": 27,
+        "duration": 1237,
+        "direction": "up",
+        "train_type": "快速"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S951",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S952",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S953",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S954",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 46,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 46,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S955",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S956",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S957",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S958",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S959",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S960",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S961",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S962",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S963",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S964",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S965",
+      "v1": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉北",
+        "terminal": "阳泉东",
+        "stops": 2,
+        "duration": 28,
+        "direction": "down",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "S966",
+      "v1": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "v2": {
+        "origin": "阳泉东",
+        "terminal": "阳泉北",
+        "stops": 2,
+        "duration": 28,
+        "direction": "up",
+        "train_type": "市郊"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "Z198",
+      "v1": {
+        "origin": "太原",
+        "terminal": "上海",
+        "stops": 9,
+        "duration": 844,
+        "direction": "up",
+        "train_type": "直达特快"
+      },
+      "v2": {
+        "origin": "太原",
+        "terminal": "上海",
+        "stops": 9,
+        "duration": 844,
+        "direction": "up",
+        "train_type": "直达特快"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "Z267",
+      "v1": {
+        "origin": "呼和浩特",
+        "terminal": "上海",
+        "stops": 25,
+        "duration": 1538,
+        "direction": "up",
+        "train_type": "直达特快"
+      },
+      "v2": {
+        "origin": "呼和浩特",
+        "terminal": "上海",
+        "stops": 25,
+        "duration": 1538,
+        "direction": "up",
+        "train_type": "直达特快"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "Z268",
+      "v1": {
+        "origin": "上海",
+        "terminal": "呼和浩特",
+        "stops": 31,
+        "duration": 1579,
+        "direction": "down",
+        "train_type": "直达特快"
+      },
+      "v2": {
+        "origin": "上海",
+        "terminal": "呼和浩特",
+        "stops": 31,
+        "duration": 1579,
+        "direction": "down",
+        "train_type": "直达特快"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    },
+    {
+      "train_no": "Z55",
+      "v1": {
+        "origin": "北京西",
+        "terminal": "兰州",
+        "stops": 7,
+        "duration": 1011,
+        "direction": "down",
+        "train_type": "直达特快"
+      },
+      "v2": {
+        "origin": "北京西",
+        "terminal": "兰州",
+        "stops": 7,
+        "duration": 1011,
+        "direction": "down",
+        "train_type": "直达特快"
+      },
+      "only_in_v1": [],
+      "only_in_v2": [],
+      "time_diffs": [],
+      "identical": true
+    }
+  ]
+}

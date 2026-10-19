@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>录制模式 · 石太客专运行图</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/record.css">
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="view" id="viewMarey"></div>
+  <div class="view" id="viewLine" hidden></div>
+</div>
+
+<div class="bigtime" id="bigtime"><b id="bigClock">--:--</b><i id="bigDay"></i></div>
+<div class="corner" id="corner"><b>石太客专 + 阳大铁路</b> · 运行图 2026-10-20 · 红=上行 / 蓝=下行</div>
+
+<div class="hud" id="hud">
+  <button type="button" class="play" id="playBtn" aria-label="播放 / 暂停">▶</button>
+  <span class="clock"><b id="clock">03:00</b><i id="rangeText">/ 32:00</i></span>
+  <input type="range" class="seek" id="seek" min="180" max="1920" step="1" value="180" aria-label="进度">
+  <select id="speed" aria-label="倍速">
+    <option value="0.5">0.5x</option>
+    <option value="1" selected>1x</option>
+    <option value="2">2x</option>
+    <option value="5">5x</option>
+  </select>
+  <div class="seg" id="viewSeg" role="group" aria-label="视图">
+    <button type="button" data-mode="marey" aria-pressed="true">运行图</button>
+    <button type="button" data-mode="line" aria-pressed="false">线路</button>
+    <button type="button" data-mode="both" aria-pressed="false">双图</button>
+  </div>
+  <button type="button" class="icon" id="fsBtn" aria-label="全屏" title="全屏（F）">⛶</button>
+</div>
+
+<script src="js/marey-chart.js"></script>
+<script src="js/line-diagram.js"></script>
+<script src="js/player.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var DATA_URL = 'data/processed/shita_timetable_2026-10-20_data-v2.json';
+  var $ = function (id) { return document.getElementById(id); };
+
+  var q = new URLSearchParams(location.search);
+  function num(v, d) { var n = Number(v); return isFinite(n) ? n : d; }
+
+  var FROM = num(q.get('from'), 180);
+  var TO = num(q.get('to'), 1920);
+  if (!(TO > FROM)) { FROM = 180; TO = 1920; }
+  var START = q.has('t') ? Math.min(TO, Math.max(FROM, num(q.get('t'), FROM))) : FROM;
+  var MODE = ['marey', 'line', 'both'].indexOf(q.get('view')) >= 0 ? q.get('view') : 'line';
+  var ZOOM = Math.max(1, num(q.get('zoom'), 3));   // 线路视图矢量放大倍数
+  var SHOW_BIGTIME = q.get('bigtime') !== '0';      // 左上角大号当前时刻
+  var AUTOPLAY = q.get('autoplay') === '1';
+  var SHOW_CORNER = q.get('corner') !== '0';
+  var FONT_MAREY = num(q.get('fs'), 1.35);
+  var FONT_LINE = num(q.get('fl'), 1.25);
+
+  var data = null, player = null, marey = null, diagram = null;
+  var dragging = false, resumeAfterDrag = false;
+  var hudLocked = false, idleTimer = null;
+
+  function fatal(msg) {
+    var d = document.createElement('div');
+    d.className = 'fatal';
+    d.innerHTML = msg;
+    document.body.appendChild(d);
+    $('hud').hidden = true;
+  }
+
+  function fmtClock(m) {
+    var total = Math.round(m);
+    var day = Math.floor(total / 1440);
+    var rem = total - day * 1440;
+    if (rem < 0) { rem += 1440; day -= 1; }
+    var hh = Math.floor(rem / 60), mm = rem % 60;
+    var s = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+    if (day === 1) return '次日 ' + s;
+    if (day > 1) return '+' + day + '天 ' + s;
+    return s;
+  }
+
+  function fmtSpan(minutes) {
+    var hh = Math.floor(minutes / 60), mm = Math.round(minutes % 60);
+    return hh + ':' + (mm < 10 ? '0' : '') + mm;
+  }
+
+  function setPlayIcon(playing) {
+    var b = $('playBtn');
+    b.textContent = playing ? '⏸' : '▶';
+    b.setAttribute('aria-label', playing ? '暂停' : '播放');
+  }
+
+  function fmtHM(t) {
+    var total = Math.round(t);
+    var rem = total - Math.floor(total / 1440) * 1440;
+    if (rem < 0) rem += 1440;
+    var hh = Math.floor(rem / 60), mm = rem % 60;
+    return (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+  }
+
+  function fmtDay(t) {
+    var day = Math.floor(Math.round(t) / 1440);
+    if (day <= 0) return '';
+    return day === 1 ? '次日' : '+' + day + ' 天';
+  }
+
+  function syncTime() {
+    var t = player ? player.getState().time : START;
+    if (marey) marey.setCurrentTime(t);
+    if (diagram) diagram.setLineTime(t);
+    $('clock').textContent = fmtClock(t);
+    if (SHOW_BIGTIME) {
+      $('bigClock').textContent = fmtHM(t);
+      $('bigDay').textContent = fmtDay(t);
+    }
+    if (!dragging) $('seek').value = String(Math.round(t));
+  }
+
+  // ---------------------------------------------------------------- 视图布局
+  function buildViews() {
+    var stage = $('stage');
+    // Marey 自带 bottom margin 96，已为 HUD 留位；线路图没有，需要显式预留
+    var hudReserve = MODE === 'marey' ? 0 : 64;
+    var availH = stage.clientHeight - 16 - hudReserve;
+    var availW = stage.clientWidth - 20;
+    if (availH < 200) availH = 200;
+
+    var gap = 8;
+    var mareyH = 0, lineH = 0;
+    if (MODE === 'marey') {
+      mareyH = availH;
+    } else if (MODE === 'line') {
+      lineH = availH;
+    } else {
+      mareyH = Math.round((availH - gap) * 0.62);
+      lineH = availH - gap - mareyH;
+    }
+
+    if (marey) { marey.destroy(); marey = null; }
+    if (diagram) { diagram.destroy(); diagram = null; }
+
+    var vm = $('viewMarey'), vl = $('viewLine');
+    vm.hidden = mareyH <= 0;
+    vl.hidden = lineH <= 0;
+    vm.style.flex = mareyH > 0 ? '0 0 ' + mareyH + 'px' : '0 0 0px';
+    vl.style.flex = lineH > 0 ? '0 0 ' + lineH + 'px' : '0 0 0px';
+
+    if (mareyH > 0) {
+      marey = window.MareyChart.initMareyChart(vm, data, {
+        height: mareyH,
+        fontScale: FONT_MAREY,
+        showLegend: false,
+        margin: { top: 100, right: 34, bottom: 96, left: 148 },
+        domain: [FROM, TO],
+        tickMinutes: 60,
+        labelMinutes: 120
+      });
+    }
+    if (lineH > 0) {
+      diagram = window.LineDiagram.initLineDiagram(vl, data, {
+        height: Math.round(lineH / ZOOM),
+        fontScale: 1,
+        viewWidth: Math.round(availW / ZOOM),
+        padTop: 30,
+        padBottom: 24,
+        showCaption: false
+      });
+    }
+    syncTime();
+  }
+
+  function syncModeButtons() {
+    Array.prototype.forEach.call($('viewSeg').children, function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-mode') === MODE));
+    });
+  }
+
+  function setMode(mode) {
+    MODE = mode;
+    syncModeButtons();
+    buildViews();
+  }
+
+  // ---------------------------------------------------------------- 控件显隐
+  function hideHud() {
+    $('hud').classList.add('is-hidden');
+    $('corner').classList.add('is-hidden');
+    document.body.classList.add('is-idle');
+  }
+
+  function showHud() {
+    if (hudLocked) return;
+    $('hud').classList.remove('is-hidden');
+    if (SHOW_CORNER) $('corner').classList.remove('is-hidden');
+    document.body.classList.remove('is-idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(hideHud, 2600);
+  }
+
+  function toggleHudLock() {
+    hudLocked = !hudLocked;
+    if (hudLocked) {
+      clearTimeout(idleTimer);
+      hideHud();
+    } else {
+      showHud();
+    }
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(function () {});
+    } else {
+      document.exitFullscreen().catch(function () {});
+    }
+  }
+
+  // ---------------------------------------------------------------- 启动
+  if (!window.MareyChart || !window.LineDiagram || !window.Player) {
+    fatal('模块未加载：需要 js/marey-chart.js、js/line-diagram.js、js/player.js。');
+    return;
+  }
+
+  if (!SHOW_BIGTIME) $('bigtime').hidden = true;
+  $('seek').min = String(FROM);
+  $('seek').max = String(TO);
+  $('seek').value = String(START);
+  $('speed').value = q.get('speed') || '1';
+  $('rangeText').textContent = '/ ' + fmtSpan(TO - FROM);
+
+  fetch(DATA_URL)
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (json) {
+      data = json;
+      if (data.meta.data_kind !== 'real') {
+        fatal('当前文件不是真实数据（data_kind=' + data.meta.data_kind + '）。');
+        return;
+      }
+      var major = String(data.meta.schema_version || '').split('.')[0];
+      if (major !== '2') {
+        fatal('数据契约版本不匹配：页面按 v2.x 读取，文件为 v' + data.meta.schema_version + '。');
+        return;
+      }
+
+      $('corner').innerHTML = '<b>石太客专 + 阳大铁路</b> · 运行图 ' +
+        data.meta.coverage.service_date + ' · ' + data.stats.usable_trains +
+        ' 车 · 红=上行 / 蓝=下行';
+
+      syncModeButtons();
+      buildViews();
+
+      player = window.Player.createPlayer({
+        min: FROM, max: TO, initial: START,
+        minutesPerSecond: 2,
+        speed: num($('speed').value, 1),
+        onTimeChange: function (t, meta) {
+          if (marey) marey.setCurrentTime(t);
+          if (diagram) diagram.setLineTime(t);
+          $('clock').textContent = fmtClock(t);
+          if (SHOW_BIGTIME) {
+            $('bigClock').textContent = fmtHM(t);
+            $('bigDay').textContent = fmtDay(t);
+          }
+          if (!dragging) $('seek').value = String(Math.round(t));
+          setPlayIcon(meta.playing);
+        }
+      });
+
+      $('playBtn').addEventListener('click', function () { player.toggle(); showHud(); });
+      $('speed').addEventListener('change', function () {
+        player.setSpeed(num($('speed').value, 1));
+      });
+      $('fsBtn').addEventListener('click', toggleFullscreen);
+      $('viewSeg').addEventListener('click', function (ev) {
+        var btn = ev.target.closest('button[data-mode]');
+        if (btn) setMode(btn.getAttribute('data-mode'));
+      });
+
+      var seek = $('seek');
+      seek.addEventListener('pointerdown', function () {
+        dragging = true;
+        resumeAfterDrag = player.getState().playing;
+        player.pause();
+      });
+      window.addEventListener('pointerup', function () {
+        if (!dragging) return;
+        dragging = false;
+        if (resumeAfterDrag) player.play();
+      });
+      seek.addEventListener('input', function () { player.seek(Number(seek.value)); });
+
+      // 鼠标静止 → 控件与光标一起隐去，录制画面只剩运行图
+      document.addEventListener('mousemove', showHud);
+      document.addEventListener('mousedown', showHud);
+      document.addEventListener('keydown', function () { showHud(); });
+
+      document.addEventListener('keydown', function (ev) {
+        if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+        var k = ev.key.toLowerCase();
+        if (k === 'f') {
+          ev.preventDefault();
+          toggleFullscreen();
+        } else if (k === 'h') {
+          ev.preventDefault();
+          toggleHudLock();
+        }
+      });
+
+      var rzTimer = null;
+      window.addEventListener('resize', function () {
+        clearTimeout(rzTimer);
+        rzTimer = setTimeout(buildViews, 180);
+      });
+
+      showHud();
+      if (AUTOPLAY) player.play();
+      else setPlayIcon(false);
+
+      window.__rec = {
+        player: player, marey: function () { return marey; },
+        diagram: function () { return diagram; }, data: data,
+        setMode: setMode, buildViews: buildViews
+      };
+    })
+    .catch(function (err) {
+      fatal('无法加载数据：' + err.message +
+        '<br><code>python -m http.server 8000 → http://localhost:8000/record.html</code>');
+    });
+})();
+</script>
+</body>
+</html>

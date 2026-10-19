@@ -1,0 +1,362 @@
+{
+  "meta": {
+    "schema_version": "2.0.0",
+    "dataset_id": "shita_timetable_synthetic_crossday-tiny",
+    "data_version": "synthetic-v1",
+    "history_version": null,
+    "history_status": "current_timetable_not_archive",
+    "data_kind": "synthetic",
+    "generated_at": null,
+    "generated_at_note": "人工构造，仅用于跨日边界测试",
+    "build_id": "synthetic-crossday-v1.0.0",
+    "time_unit": "minute",
+    "timezone": "Asia/Shanghai",
+    "time_origin": "基准服务日 2026-10-20 00:00（绝对分钟 0）",
+    "source_summary": {
+      "primary": "人工构造，非真实铁路数据",
+      "access_date": "2026-10-19",
+      "query_date": "2026-10-20",
+      "official_verification": "不适用（synthetic）",
+      "cross_check": "不适用（synthetic）"
+    },
+    "coverage": {
+      "service_date": "2026-10-20",
+      "abs_minute_min": 1430,
+      "abs_minute_max": 1500,
+      "trains_total": 1,
+      "stations_total": 3,
+      "lines": [
+        "石太客专"
+      ]
+    },
+    "validation_status": {
+      "state": "pass",
+      "usable_trains": 1,
+      "blocked_trains": 0,
+      "open_warnings": 0
+    }
+  },
+  "provenance": {
+    "csv": {
+      "file": "synthetic_fixture（不由 CSV 派生）",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "rows": 0,
+      "encoding": "n/a",
+      "line_endings": "n/a",
+      "header": [
+        "train_no",
+        "direction",
+        "train_type",
+        "station_order",
+        "station",
+        "arr_time",
+        "dep_time",
+        "day_offset",
+        "km",
+        "is_stop",
+        "remark"
+      ]
+    },
+    "cleaner": {
+      "script": "handcrafted fixture",
+      "version": "1.0.0"
+    },
+    "documents": [
+      {
+        "path": "docs/test-plan.md",
+        "role": "测试计划"
+      }
+    ],
+    "caveats": [
+      "本文件为 synthetic 测试数据，禁止当作真实时刻使用"
+    ]
+  },
+  "stations": [
+    {
+      "station_id": "st:石家庄",
+      "name": "石家庄",
+      "in_dataset": true,
+      "is_corridor": true,
+      "is_highlighted": false,
+      "km": null,
+      "station_order": null,
+      "corridor_ids": [
+        "sjz"
+      ],
+      "source": "docs/stations.md",
+      "notes": "synthetic 夹具：跨日边界 23:50 → 次日 00:10",
+      "stats": {
+        "stop_records": 1,
+        "train_types": [
+          "测试"
+        ]
+      },
+      "place": {
+        "line": "shita",
+        "sequence": 7,
+        "x": 0.86,
+        "y": 0.36,
+        "role": "endpoint_east",
+        "branch_of": null,
+        "branch_order": null,
+        "link": "main",
+        "label": "below"
+      }
+    },
+    {
+      "station_id": "st:阳泉北",
+      "name": "阳泉北",
+      "in_dataset": true,
+      "is_corridor": true,
+      "is_highlighted": true,
+      "km": null,
+      "station_order": null,
+      "corridor_ids": [
+        "yqbei"
+      ],
+      "source": "docs/stations.md",
+      "notes": "synthetic 夹具：跨日边界 23:50 → 次日 00:10",
+      "stats": {
+        "stop_records": 1,
+        "train_types": [
+          "测试"
+        ]
+      },
+      "place": {
+        "line": "shita",
+        "sequence": 4,
+        "x": 0.44,
+        "y": 0.36,
+        "role": "junction",
+        "branch_of": null,
+        "branch_order": null,
+        "link": "main",
+        "label": "above"
+      }
+    },
+    {
+      "station_id": "st:太原",
+      "name": "太原",
+      "in_dataset": true,
+      "is_corridor": true,
+      "is_highlighted": false,
+      "km": null,
+      "station_order": null,
+      "corridor_ids": [
+        "ty"
+      ],
+      "source": "docs/stations.md",
+      "notes": "synthetic 夹具：跨日边界 23:50 → 次日 00:10",
+      "stats": {
+        "stop_records": 1,
+        "train_types": [
+          "测试"
+        ]
+      },
+      "place": {
+        "line": "shita",
+        "sequence": 2,
+        "x": 0.1,
+        "y": 0.36,
+        "role": "endpoint_west",
+        "branch_of": null,
+        "branch_order": null,
+        "link": "main",
+        "label": "above"
+      }
+    }
+  ],
+  "trains": [
+    {
+      "train_id": "tr:S-CROSS",
+      "train_no": "S-CROSS",
+      "direction": "down",
+      "train_type": "测试",
+      "service_status": {
+        "code": "normal",
+        "basis": "synthetic 固定"
+      },
+      "origin": "石家庄",
+      "terminal": "太原",
+      "station_count": 3,
+      "first_dep_abs_minute": 1430,
+      "last_arr_abs_minute": 1500,
+      "duration_minutes": 70,
+      "has_day_offset": true,
+      "validation": {
+        "status": "validated",
+        "usable_for_frontend": true,
+        "blocking_issue_count": 0,
+        "warning_count": 0,
+        "flags": []
+      },
+      "remarks": [],
+      "source_refs": [],
+      "stops": [
+        {
+          "station_order": 1,
+          "station": "石家庄",
+          "station_id": "st:石家庄",
+          "arr_time": null,
+          "dep_time": "23:50",
+          "minute_of_day": {
+            "arr": null,
+            "dep": 1430
+          },
+          "abs_minute": {
+            "arr": null,
+            "dep": 1430
+          },
+          "day_offset": 0,
+          "day_offset_imputed": false,
+          "km": null,
+          "is_stop": true,
+          "stop_kind": "origin",
+          "dwell_minutes": null,
+          "remark": "synthetic-跨日边界样例",
+          "source_row": 2,
+          "flags": []
+        },
+        {
+          "station_order": 2,
+          "station": "阳泉北",
+          "station_id": "st:阳泉北",
+          "arr_time": "00:10",
+          "dep_time": "00:12",
+          "minute_of_day": {
+            "arr": 10,
+            "dep": 12
+          },
+          "abs_minute": {
+            "arr": 1450,
+            "dep": 1452
+          },
+          "day_offset": 1,
+          "day_offset_imputed": false,
+          "km": null,
+          "is_stop": true,
+          "stop_kind": "stop",
+          "dwell_minutes": 2,
+          "remark": "synthetic-跨日边界样例",
+          "source_row": 3,
+          "flags": []
+        },
+        {
+          "station_order": 3,
+          "station": "太原",
+          "station_id": "st:太原",
+          "arr_time": "01:00",
+          "dep_time": null,
+          "minute_of_day": {
+            "arr": 60,
+            "dep": null
+          },
+          "abs_minute": {
+            "arr": 1500,
+            "dep": null
+          },
+          "day_offset": 1,
+          "day_offset_imputed": false,
+          "km": null,
+          "is_stop": true,
+          "stop_kind": "terminal",
+          "dwell_minutes": null,
+          "remark": "synthetic-跨日边界样例",
+          "source_row": 4,
+          "flags": []
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "sg:S-CROSS:001:run",
+      "train_id": "tr:S-CROSS",
+      "train_no": "S-CROSS",
+      "segment_type": "run",
+      "from_station_id": "st:石家庄",
+      "to_station_id": "st:阳泉北",
+      "from_station_order": 1,
+      "to_station_order": 2,
+      "from_dep_time": "23:50",
+      "to_arr_time": "00:10",
+      "departure_abs_minute": 1430,
+      "arrival_abs_minute": 1450,
+      "from_km": null,
+      "to_km": null,
+      "duration_minutes": 20,
+      "data_quality": {
+        "status": "ok",
+        "flags": []
+      }
+    },
+    {
+      "segment_id": "sg:S-CROSS:002:dwell",
+      "train_id": "tr:S-CROSS",
+      "train_no": "S-CROSS",
+      "segment_type": "dwell",
+      "from_station_id": "st:阳泉北",
+      "to_station_id": "st:阳泉北",
+      "from_station_order": 2,
+      "to_station_order": 2,
+      "from_dep_time": "00:12",
+      "to_arr_time": "00:10",
+      "departure_abs_minute": 1452,
+      "arrival_abs_minute": 1450,
+      "from_km": null,
+      "to_km": null,
+      "duration_minutes": 2,
+      "data_quality": {
+        "status": "ok",
+        "flags": []
+      }
+    },
+    {
+      "segment_id": "sg:S-CROSS:003:run",
+      "train_id": "tr:S-CROSS",
+      "train_no": "S-CROSS",
+      "segment_type": "run",
+      "from_station_id": "st:阳泉北",
+      "to_station_id": "st:太原",
+      "from_station_order": 2,
+      "to_station_order": 3,
+      "from_dep_time": "00:12",
+      "to_arr_time": "01:00",
+      "departure_abs_minute": 1452,
+      "arrival_abs_minute": 1500,
+      "from_km": null,
+      "to_km": null,
+      "duration_minutes": 48,
+      "data_quality": {
+        "status": "ok",
+        "flags": []
+      }
+    }
+  ],
+  "warnings": [],
+  "stats": {
+    "trains": 1,
+    "usable_trains": 1,
+    "blocked_trains": 0,
+    "trains_with_notes": 0,
+    "stations": 3,
+    "stations_in_dataset": 3,
+    "stop_records": 3,
+    "segments": 3,
+    "warnings": {
+      "total": 0,
+      "block": 0,
+      "warn": 0,
+      "info": 0,
+      "excluded": 0
+    },
+    "km_missing_stops": 3,
+    "direction": {
+      "up": 0,
+      "down": 1,
+      "unknown": 0
+    },
+    "day_offset_stops": 2
+  }
+}

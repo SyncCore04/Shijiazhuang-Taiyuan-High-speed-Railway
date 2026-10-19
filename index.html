@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>石太客专 + 阳大铁路 · 列车运行图</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/demo.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="wrap app">
+  <header class="top">
+    <h1>石太客专 + 阳大铁路 · 列车运行图</h1>
+    <span class="badge">数据取自 12306 官方前端</span>
+    <span class="sub" id="dataMeta">现行图 2026-10-20 · 契约 v2.1.0</span>
+  </header>
+
+  <section class="panel transport" aria-label="播放控制">
+    <button type="button" id="playBtn" aria-pressed="false">▶ 播放</button>
+    <button type="button" id="minus1" title="−1 分钟（←）">− 1 分钟</button>
+    <button type="button" id="plus1" title="+1 分钟（→）">+ 1 分钟</button>
+    <div class="divider" aria-hidden="true"></div>
+    <label for="speed" style="font-size:12px;color:var(--ink-2)">速度</label>
+    <select id="speed" aria-label="播放速度">
+      <option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option>
+      <option value="2">2x</option>
+      <option value="5">5x</option>
+    </select>
+    <span class="hint" id="speedHint" style="margin:0;font-size:11px">1x ≈ 2 分钟/秒</span>
+    <div class="divider" aria-hidden="true"></div>
+    <input id="timeline" type="range" min="0" max="2700" step="1" value="600" aria-label="时间轴">
+    <span id="clock" aria-live="polite">10:00</span>
+  </section>
+
+  <div id="emptyBanner" class="empty-banner" hidden>
+    当前筛选条件下没有可绘制的车次。可以放宽方向 / 车型 / 车站条件，或点击「重置筛选」。
+  </div>
+
+  <div class="app-grid">
+    <aside class="panel filters" aria-label="筛选">
+      <h2>筛选</h2>
+
+      <div class="filter-group">
+        <label>方向</label>
+        <div class="seg" id="dirSeg" role="group" aria-label="方向筛选"></div>
+      </div>
+
+      <div class="filter-group">
+        <label for="typeSel">车型</label>
+        <select id="typeSel" aria-label="车型筛选"></select>
+      </div>
+
+      <div class="filter-group">
+        <label for="stationSel">车站</label>
+        <select id="stationSel" aria-label="车站筛选"></select>
+        <div style="margin-top:6px">
+          <select id="stationMode" aria-label="车站匹配方式">
+            <option value="stop">在该站停站</option>
+            <option value="pass">在该站通过</option>
+            <option value="either">经停或通过</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button type="button" id="quickYq">阳泉北</button>
+        <button type="button" id="resetFilters">重置筛选</button>
+      </div>
+
+      <div class="filter-summary" id="filterSummary"></div>
+    </aside>
+
+    <div class="views">
+      <section class="card">
+        <div class="card-head">
+          <strong>Marey 运行图</strong>
+          <span class="legend-inline">
+            <span class="up"><i></i>上行</span>
+            <span class="down"><i></i>下行</span>
+          </span>
+        </div>
+        <div class="card-body"><div id="marey"></div></div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <strong>线路示意</strong>
+          <span class="muted">横轴为示意站序，非地理比例 / 非公里数</span>
+        </div>
+        <div class="card-body"><div id="line"></div></div>
+      </section>
+    </div>
+
+    <aside class="panel detail" aria-label="车次详情">
+      <div class="card-head" style="padding:0 0 8px;border-bottom:none">
+        <strong style="font-size:13px">车次详情</strong>
+        <button type="button" id="clearSel" style="font-size:11px;padding:2px 8px">清除</button>
+      </div>
+      <div id="detail"></div>
+    </aside>
+  </div>
+
+  <footer class="notes">
+    数据：中国铁路 12306 官方前端（余票查询 leftTicket + 经停站查询 queryByTrainNo），
+    查询服务日 2026-10-20、访问 2026-10-19，<strong>官方接口直采，非第三方聚合</strong>。
+    <span id="dataNote">本批车次与可绘制车数见下。</span><br>
+    键盘：<code>空格</code> 播放/暂停，<code>←</code> <code>→</code> 逐分钟（输入控件聚焦时让行）。
+    本地运行：<code>python -m http.server 8000</code> → <code>http://localhost:8000/index.html</code>。
+  </footer>
+</div>
+
+<script src="js/marey-chart.js"></script>
+<script src="js/line-diagram.js"></script>
+<script src="js/player.js"></script>
+<script src="js/interactions.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var DATA_URL = 'data/processed/shita_timetable_2026-10-20_data-v2.json';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function fatal(message, cmd) {
+    document.querySelector('.app-grid').innerHTML =
+      '<div class="fatal" style="grid-column:1/-1">' + message +
+      (cmd ? '<br><code>' + cmd + '</code>' : '') + '</div>';
+    $('emptyBanner').hidden = true;
+  }
+
+  if (!window.MareyChart || !window.LineDiagram || !window.Player || !window.Interactions) {
+    fatal('模块未加载完整：需要 js/marey-chart.js、js/line-diagram.js、js/player.js、js/interactions.js。');
+    return;
+  }
+
+  var data, marey, diagram, player;
+  var selectedId = null;
+  var lastMinute = null;
+  var lastPlaying = null;
+  var dragging = false;
+  var resumeAfterDrag = false;
+  var filters = { direction: 'all', trainType: 'all', station: 'all', stationMode: 'stop' };
+
+  function setPlayButton(playing) {
+    var btn = $('playBtn');
+    btn.textContent = playing ? '⏸ 暂停' : '▶ 播放';
+    btn.setAttribute('aria-pressed', String(playing));
+  }
+
+  function onTimeChange(t, meta) {
+    var minute = Math.round(t);
+    if (minute !== lastMinute) {
+      lastMinute = minute;
+      $('clock').textContent = window.Interactions.formatAbs(minute);
+      if (!dragging) $('timeline').value = String(minute);
+    }
+    if (meta.playing !== lastPlaying) {
+      lastPlaying = meta.playing;
+      setPlayButton(meta.playing);
+    }
+    marey.setCurrentTime(t);
+    diagram.setLineTime(t);
+  }
+
+  function visibleIds() {
+    return window.Interactions.applyFilters(data.trains, filters)
+      .filter(function (t) { return t.validation.usable_for_frontend; })
+      .map(function (t) { return t.train_id; });
+  }
+
+  function refreshFilters() {
+    var matched = window.Interactions.applyFilters(data.trains, filters);
+    var drawable = matched.filter(function (t) { return t.validation.usable_for_frontend; });
+    var ids = drawable.map(function (t) { return t.train_id; });
+
+    marey.setVisibleTrains(ids);
+    diagram.setVisibleTrains(ids);
+    $('emptyBanner').hidden = drawable.length > 0;
+
+    var summary = window.Interactions.filtersSummary(filters);
+    var extra = matched.length > drawable.length
+      ? '（另有 ' + (matched.length - drawable.length) + ' 车待核未绘制）' : '';
+    $('filterSummary').innerHTML = summary + '<br>可见 <b>' + drawable.length + '</b> 车' + extra;
+
+    if (selectedId && ids.indexOf(selectedId) === -1) {
+      clearSelection('已选车次不在当前筛选结果中');
+    }
+  }
+
+  function selectTrain(trainId) {
+    var train = data.trains.filter(function (t) { return t.train_id === trainId; })[0];
+    if (!train) return;
+    selectedId = trainId;
+    marey.setSelectedTrain(trainId);
+    diagram.setSelectedTrain(trainId);
+    window.Interactions.renderDetail($('detail'), train, data);
+  }
+
+  function clearSelection(message) {
+    selectedId = null;
+    marey.setSelectedTrain(null);
+    diagram.setSelectedTrain(null);
+    if (message) {
+      window.Interactions.renderEmpty($('detail'), message, '调整筛选后可重新选择车次');
+    } else {
+      window.Interactions.renderEmpty($('detail'), '未选择车次', '点击任一视图中的车次查看完整时刻表');
+    }
+  }
+
+  function buildDirectionButtons() {
+    var counts = { all: data.trains.length, up: 0, down: 0, unknown: 0 };
+    data.trains.forEach(function (t) { counts[t.direction] = (counts[t.direction] || 0) + 1; });
+    var seg = $('dirSeg');
+    var defs = [
+      { key: 'all', label: '全部', n: counts.all },
+      { key: 'up', label: '上行', n: counts.up },
+      { key: 'down', label: '下行', n: counts.down }
+    ];
+    if (counts.unknown > 0) defs.push({ key: 'unknown', label: '未知', n: counts.unknown });
+
+    defs.forEach(function (d) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = d.label;
+      btn.title = d.label + ' ' + d.n + ' 车';
+      btn.setAttribute('aria-pressed', String(filters.direction === d.key));
+      btn.addEventListener('click', function () {
+        filters.direction = d.key;
+        Array.prototype.forEach.call(seg.children, function (b) {
+          b.setAttribute('aria-pressed', String(b === btn));
+        });
+        refreshFilters();
+      });
+      seg.appendChild(btn);
+    });
+  }
+
+  function buildTypeSelect() {
+    var sel = $('typeSel');
+    var options = window.Interactions.typeOptions(data.trains);
+    var all = document.createElement('option');
+    all.value = 'all';
+    all.textContent = '全部车型（' + data.trains.length + '）';
+    sel.appendChild(all);
+    options.forEach(function (o) {
+      var opt = document.createElement('option');
+      opt.value = o.value;
+      opt.textContent = o.label + '（' + o.count + '）';
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', function () {
+      filters.trainType = sel.value;
+      refreshFilters();
+    });
+  }
+
+  function buildStationSelect() {
+    var sel = $('stationSel');
+    var all = document.createElement('option');
+    all.value = 'all';
+    all.textContent = '全部车站';
+    sel.appendChild(all);
+    data.stations
+      .filter(function (s) { return s.is_corridor && s.stats.stop_records > 0; })
+      .sort(function (a, b) { return b.stats.stop_records - a.stats.stop_records; })
+      .forEach(function (s) {
+        var opt = document.createElement('option');
+        opt.value = s.name;
+        opt.textContent = s.name + '（' + s.stats.stop_records + ' 条停站）';
+        sel.appendChild(opt);
+      });
+    sel.addEventListener('change', function () {
+      filters.station = sel.value;
+      refreshFilters();
+    });
+    $('stationMode').addEventListener('change', function () {
+      filters.stationMode = $('stationMode').value;
+      refreshFilters();
+    });
+  }
+
+  fetch(DATA_URL)
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (json) {
+      data = json;
+      if (data.meta.data_kind !== 'real') {
+        fatal('当前文件不是真实数据（data_kind=' + data.meta.data_kind + '），请切换到 data/processed 下的正式数据集。');
+        return;
+      }
+      var major = String(data.meta.schema_version || '').split('.')[0];
+      if (major !== '2') {
+        fatal('数据契约版本不匹配：页面按 v2.x 读取，文件为 v' + data.meta.schema_version + '。');
+        return;
+      }
+
+      var domain = window.MareyChart.computeDomain(data.meta.coverage, {});
+      $('timeline').min = String(domain[0]);
+      $('timeline').max = String(domain[1]);
+      $('dataMeta').textContent = data.meta.dataset_id + ' · 契约 v' + data.meta.schema_version +
+        ' · ' + data.meta.coverage.service_date;
+      if ($('dataNote')) {
+        $('dataNote').textContent = '本批 ' + data.stats.trains + ' 车中 ' + data.stats.usable_trains +
+          ' 车可绘制，' + data.stats.blocked_trains + ' 车因停站跨午夜（绝对分钟不单调）不参与绘制。';
+      }
+
+      marey = window.MareyChart.initMareyChart($('marey'), data, { height: 560 });
+      diagram = window.LineDiagram.initLineDiagram($('line'), data, { height: 460 });
+      marey.setCurrentTime(600);
+      diagram.setLineTime(600);
+
+      player = window.Player.createPlayer({
+        min: domain[0], max: domain[1], initial: 600,
+        minutesPerSecond: 2,
+        onTimeChange: onTimeChange
+      });
+
+      buildDirectionButtons();
+      buildTypeSelect();
+      buildStationSelect();
+      refreshFilters();
+      clearSelection();
+
+      $('playBtn').addEventListener('click', function () { player.toggle(); });
+      $('minus1').addEventListener('click', function () { player.step(-1); });
+      $('plus1').addEventListener('click', function () { player.step(1); });
+      $('speed').addEventListener('change', function () {
+        var v = Number($('speed').value);
+        player.setSpeed(v);
+        $('speedHint').textContent = '1x ≈ 2 分钟/秒 → 当前 ' + (2 * v) + ' 分钟/秒';
+      });
+
+      var timeline = $('timeline');
+      timeline.addEventListener('pointerdown', function () {
+        dragging = true;
+        resumeAfterDrag = player.getState().playing;
+        player.pause();
+      });
+      window.addEventListener('pointerup', function () {
+        if (!dragging) return;
+        dragging = false;
+        if (resumeAfterDrag) player.play();
+      });
+      timeline.addEventListener('input', function () {
+        player.seek(Number(timeline.value));
+      });
+
+      $('quickYq').addEventListener('click', function () {
+        filters.station = '阳泉北';
+        filters.stationMode = 'stop';
+        $('stationSel').value = '阳泉北';
+        $('stationMode').value = 'stop';
+        refreshFilters();
+      });
+      $('resetFilters').addEventListener('click', function () {
+        filters = { direction: 'all', trainType: 'all', station: 'all', stationMode: 'stop' };
+        $('typeSel').value = 'all';
+        $('stationSel').value = 'all';
+        $('stationMode').value = 'stop';
+        Array.prototype.forEach.call($('dirSeg').children, function (b, i) {
+          b.setAttribute('aria-pressed', String(i === 0));
+        });
+        refreshFilters();
+      });
+      $('clearSel').addEventListener('click', function () { clearSelection(); });
+
+      $('marey').addEventListener('trainselect', function (ev) { selectTrain(ev.detail.trainId); });
+      $('line').addEventListener('trainselect', function (ev) { selectTrain(ev.detail.trainId); });
+
+      window.__app = {
+        data: data, player: player, marey: marey, diagram: diagram,
+        filters: filters, visibleIds: visibleIds,
+        selectTrain: selectTrain, clearSelection: clearSelection,
+        getSelected: function () { return selectedId; }
+      };
+    })
+    .catch(function (err) {
+      fatal('无法加载数据：' + err.message + '。浏览器在 file:// 下禁止 fetch，请用本地 HTTP 打开。',
+        'python -m http.server 8000   →   http://localhost:8000/index.html');
+    });
+})();
+</script>
+</body>
+</html>

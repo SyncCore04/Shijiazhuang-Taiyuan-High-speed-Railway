@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marey 运行图 · 石太客专 + 阳大铁路（阶段4 演示）</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Marey 运行图 · 石太客专 + 阳大铁路</h1>
+    <span class="badge">全部时刻需 12306 官方复核</span>
+    <span class="sub">阶段4 模块演示 · 契约 v1.0.0 · 现行图 2026-10-20</span>
+  </header>
+
+  <section class="stats" id="stats" aria-label="数据概览"></section>
+
+  <section class="panel controls" aria-label="临时时间输入">
+    <div class="group" style="flex:1 1 420px">
+      <label for="timeSlider">临时时间滑杆</label>
+      <input id="timeSlider" type="range" min="0" max="2700" step="1" value="600">
+      <span class="time-readout" id="timeReadout">10:00</span>
+    </div>
+    <div class="group">
+      <button type="button" id="minus1">− 1 分钟</button>
+      <button type="button" id="plus1">+ 1 分钟</button>
+    </div>
+    <div class="group">
+      <label for="win">视图范围</label>
+      <select id="win">
+        <option value="0">全程（45 小时）</option>
+        <option value="360">6 小时窗口</option>
+        <option value="180">3 小时窗口</option>
+        <option value="90">1.5 小时窗口</option>
+      </select>
+    </div>
+    <div class="group" role="group" aria-label="方向筛选">
+      <button type="button" data-dir="all" aria-pressed="true">全部</button>
+      <button type="button" data-dir="up" aria-pressed="false">仅上行</button>
+      <button type="button" data-dir="down" aria-pressed="false">仅下行</button>
+    </div>
+  </section>
+
+  <section class="chart-shell">
+    <div id="chart" aria-live="polite"></div>
+  </section>
+  <p class="hint">
+    竖线由 <code>setCurrentTime(absMinute)</code> 驱动，只移动图元、不重建整图；点击任一条折线会派发
+    <code>trainselect</code> 事件。本页不是播放器，播放逻辑在阶段6。
+    折线只覆盖目标通道（石家庄/太原—阳泉北—阳泉东），通道外站点不绘制，因此折线会在通道边界截断。
+  </p>
+
+  <section class="panel" id="selection" aria-live="polite">
+    <div class="empty">点击图中任一条车次折线查看基础信息（阶段7 再接完整时刻表与筛选）。</div>
+  </section>
+
+  <footer class="notes">
+    数据来源：去哪儿单车现行页（queryDate 2026-10-20，访问 2026-10-19），第三方聚合，<strong>全部时刻需 12306 官方复核</strong>。
+    纵轴为示意图站序（石家庄北与石家庄、太原南与太原共用槽位；阳泉东/平定为阳大支线），<strong>不是公里数</strong>。
+    6 车因跨日未定（abs 不单调）默认不绘制，见图例右上角计数。<br>
+    本地预览：在项目根目录执行 <code>python -m http.server 8000</code>，再打开
+    <code>http://localhost:8000/marey-demo.html</code>；<code>file://</code> 下 fetch 会被浏览器拦截。
+  </footer>
+</div>
+
+<script src="js/marey-chart.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var DATA_URL = 'data/processed/shita_timetable_2026-10-20_data-v1.json';
+  var chartEl = document.getElementById('chart');
+  var statsEl = document.getElementById('stats');
+  var selectionEl = document.getElementById('selection');
+  var slider = document.getElementById('timeSlider');
+  var readout = document.getElementById('timeReadout');
+
+  function fatal(message, cmd) {
+    chartEl.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'fatal';
+    box.innerHTML = message + (cmd ? '<br><code>' + cmd + '</code>' : '');
+    chartEl.appendChild(box);
+  }
+
+  if (!window.MareyChart) {
+    fatal('未加载到 js/marey-chart.js，请检查文件路径。');
+    return;
+  }
+
+  function fmt(m) {
+    m = Math.round(m);
+    var day = Math.floor(m / 1440);
+    var rem = ((m % 1440) + 1440) % 1440;
+    var hh = Math.floor(rem / 60), mm = rem % 60;
+    var t = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+    return day > 0 ? t + '（次日）' : t;
+  }
+
+  function renderStats(data) {
+    var st = data.stats;
+    var items = [
+      [st.trains, '车次'],
+      [st.usable_trains, '可绘（校验通过）'],
+      [st.blocked_trains, '阻断（跨日未定）'],
+      [st.stations_in_dataset, '站名（全批）'],
+      [st.segments, '区间'],
+      [fmt(data.meta.coverage.abs_minute_max), '末班时刻']
+    ];
+    statsEl.innerHTML = items.map(function (it) {
+      return '<div class="stat"><b>' + it[0] + '</b><span>' + it[1] + '</span></div>';
+    }).join('');
+  }
+
+  function renderSelection(train, data) {
+    if (!train) {
+      selectionEl.innerHTML = '<div class="empty">未找到该车次。</div>';
+      return;
+    }
+    var dirText = train.direction === 'up' ? '上行 up' : train.direction === 'down' ? '下行 down' : '未知 unknown';
+    var statusText = train.validation.status === 'validated' ? '已校验'
+      : train.validation.status === 'validated_with_notes' ? '已校验（带待核标注）' : '待复核（阻断）';
+    var warnings = (data.warnings || []).filter(function (w) {
+      return w.train_id === train.train_id || (w.train_no && w.train_no.split(',').map(function (x) { return x.trim(); }).indexOf(train.train_no) !== -1);
+    });
+    var corridor = train.stops.filter(function (s) {
+      return s.station_order >= 1;
+    }).filter(function (s) {
+      return ['石家庄', '石家庄北', '阳泉北', '阳泉东', '平定', '太原', '太原南'].indexOf(s.station) !== -1;
+    });
+    var rows = corridor.map(function (s) {
+      return '<tr><td>' + s.station_order + '</td><td>' + s.station + '</td><td>' +
+        (s.arr_time || '—') + '</td><td>' + (s.dep_time || '—') + '</td><td>' +
+        (s.arr_time || s.dep_time ? (s.day_offset ? '+' + s.day_offset + 'd' : '当日') : '—') + '</td><td>' +
+        (s.stop_kind === 'pass' ? '通过' : s.stop_kind === 'origin' ? '始发' : s.stop_kind === 'terminal' ? '终到' : '停站') +
+        '</td></tr>';
+    }).join('');
+
+    selectionEl.innerHTML =
+      '<div class="detail">' +
+        '<div><span class="k">车次</span><span class="v">' + train.train_no + '</span></div>' +
+        '<div><span class="k">方向</span><span class="v">' + dirText + '</span></div>' +
+        '<div><span class="k">类型</span><span class="v">' + train.train_type + '</span></div>' +
+        '<div><span class="k">数据状态</span><span class="v">' + statusText + '</span></div>' +
+        '<div><span class="k">始发 → 终到</span><span class="v">' + train.origin + ' → ' + train.terminal + '</span></div>' +
+        '<div><span class="k">全程时长</span><span class="v">' +
+          (train.duration_minutes === null ? '不可用（跨日未定）' : train.duration_minutes + ' 分钟') + '</span></div>' +
+      '</div>' +
+      '<table style="width:100%;border-collapse:collapse;margin-top:10px;font-size:12px">' +
+        '<thead><tr style="text-align:left;color:#8b919a;font-weight:400">' +
+        '<th>站序</th><th>车站</th><th>到达</th><th>出发</th><th>日期</th><th>站型</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody></table>' +
+      (warnings.length ? '<ul class="warn-list">' + warnings.map(function (w) {
+        return '<li><b>' + w.code + '</b>（' + w.severity + '）：' + w.message + '</li>';
+      }).join('') + '</ul>' : '');
+  }
+
+  fetch(DATA_URL)
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      if (data.meta.data_kind !== 'real') {
+        fatal('该文件不是真实数据（data_kind=' + data.meta.data_kind + '），请切换到 data/processed 下的真实数据集。');
+        return;
+      }
+      renderStats(data);
+
+      var chart = window.MareyChart.initMareyChart(chartEl, data, { height: 660 });
+      var layout = chart.getLayout();
+      var domain = layout.domain;
+
+      slider.min = String(domain[0]);
+      slider.max = String(domain[1]);
+      var initial = Math.round((domain[0] + domain[1]) / 2 / 30) * 30;
+      slider.value = String(initial);
+      readout.textContent = fmt(initial);
+      chart.setCurrentTime(initial);
+
+      var winSelect = document.getElementById('win');
+      function applyWindow(force) {
+        var win = Number(winSelect.value);
+        var cur = chart.getLayout().domain;
+        if (!win) {
+          if (cur[0] !== domain[0] || cur[1] !== domain[1]) chart.setDomain(domain[0], domain[1]);
+          return;
+        }
+        var center = Number(slider.value);
+        // 时间仍在窗口中间 80% 内就不重绘，避免拖动滑杆时每帧重建 86 条折线
+        if (!force && center > cur[0] + win * 0.1 && center < cur[1] - win * 0.1) return;
+        var a = Math.max(domain[0], Math.round(center - win / 2));
+        var b = Math.min(domain[1], a + win);
+        a = Math.max(domain[0], b - win);
+        if (a === cur[0] && b === cur[1]) return;
+        chart.setDomain(a, b);
+      }
+      winSelect.addEventListener('change', function () { applyWindow(true); });
+
+      slider.addEventListener('input', function () {
+        var v = Number(slider.value);
+        readout.textContent = fmt(v);
+        chart.setCurrentTime(v);
+        applyWindow();
+      });
+      document.getElementById('minus1').addEventListener('click', function () {
+        var v = Math.max(domain[0], Number(slider.value) - 1);
+        slider.value = String(v); readout.textContent = fmt(v); chart.setCurrentTime(v); applyWindow(false);
+      });
+      document.getElementById('plus1').addEventListener('click', function () {
+        var v = Math.min(domain[1], Number(slider.value) + 1);
+        slider.value = String(v); readout.textContent = fmt(v); chart.setCurrentTime(v); applyWindow(false);
+      });
+
+      var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-dir]'));
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+          var dir = btn.getAttribute('data-dir');
+          if (dir === 'all') {
+            chart.setVisibleTrains(null);
+            return;
+          }
+          var ids = data.trains.filter(function (t) {
+            return t.direction === dir && t.validation.usable_for_frontend;
+          }).map(function (t) { return t.train_id; });
+          chart.setVisibleTrains(ids);
+        });
+      });
+
+      chartEl.addEventListener('trainselect', function (ev) {
+        var detail = ev.detail || {};
+        var train = data.trains.filter(function (t) { return t.train_id === detail.trainId; })[0];
+        renderSelection(train, data);
+      });
+
+      window.__mareyDemo = { chart: chart, data: data };  // 便于人工验收
+    })
+    .catch(function (err) {
+      fatal('无法加载数据：' + err.message + '。浏览器在 file:// 下禁止 fetch，请用本地 HTTP 打开。',
+        'python -m http.server 8000   →   http://localhost:8000/marey-demo.html');
+    });
+})();
+</script>
+</body>
+</html>

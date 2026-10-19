@@ -1,0 +1,49 @@
+review_id,severity,category,train_no,station_order,station,row_number,issue,evidence,frontend_impact,doc_ref,status
+RV-001,block,crossing_unresolved,K373,9,徐州,857,徐州 01:30 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=01:30 dep=01:37 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-002,block,crossing_unresolved,K374,11,枣庄西,838,枣庄西 02:48 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=02:48 dep=02:57 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-003,block,crossing_unresolved,K565,12,聊城,881,聊城 00:52 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=00:52 dep=00:58 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-004,block,crossing_unresolved,K609,2,辛集,960,辛集 02:59 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=02:59 dep=03:15 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-005,block,crossing_unresolved,K730,11,衡水,911,衡水 00:34 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=00:34 dep=00:43 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-006,block,crossing_unresolved,K730,29,惠州,929,惠州 03:40 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=03:40 dep=03:44 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-007,block,crossing_unresolved,K866,18,辛集,949,辛集 00:14 相对前站时刻倒退，day_offset=0 且页面未明示次日；疑似跨日,前站时刻见 source_row 上下文；arr=00:14 dep=00:20 day_offset=0,该车 abs_minute 不单调，暂不可用于运行图,uncertainties §4（已登记，本次检测结果与清单一致）,open
+RV-008,warn,catalog_conflict,"K585, K587",,平定,,车站骨架将「平定」标为待核（改建站，南段），但 CSV 中 K585/K587 有停站时刻,docs/stations.md 二、阳大铁路 vs CSV 站记录,阳大线南段是否纳入绘图需确认,docs/stations.md 二,open
+RV-009,warn,catalog_conflict,"K585, K587",,昔阳,,车站骨架将「大寨(昔阳)」标为待核/未见现行客运，但 CSV 以「昔阳」列有 K585/K587 停站时刻,docs/stations.md 二、阳大铁路 vs CSV 站记录,阳大线南段是否纳入绘图需确认,docs/stations.md 二,open
+RV-010,warn,direction_review,D918,,,,采集期按石太段走向将 down 校正为 up（太原南→深圳坪山），需 12306 按官方上下行定义复核,direction=up,方向色/箭头可能需翻转,uncertainties §5,open
+RV-011,warn,direction_review,K374,,,,采集期按石太段走向将 down 校正为 up（大同→上海），需 12306 按官方上下行定义复核,direction=up,方向色/箭头可能需翻转,uncertainties §5,open
+RV-012,warn,direction_review,K730,,,,采集期按石太段走向将 down 校正为 up（大同→广州白云），需 12306 按官方上下行定义复核,direction=up,方向色/箭头可能需翻转,uncertainties §5,open
+RV-013,warn,direction_review,K1331,,,,采集期按石太段走向将 down 校正为 up（银川→昆山），需 12306 按官方上下行定义复核,direction=up,方向色/箭头可能需翻转,uncertainties §5,open
+RV-014,warn,direction_review,Z198,,,,采集期按石太段走向将 down 校正为 up（太原→上海），需 12306 按官方上下行定义复核,direction=up,方向色/箭头可能需翻转,uncertainties §5,open
+RV-015,warn,direction_review,Z267,,,,采集期按石太段走向将 down 校正为 up（呼和浩特→上海），需 12306 按官方上下行定义复核,direction=up,方向色/箭头可能需翻转,uncertainties §5,open
+RV-016,warn,route_pending,C799,,,,经石家庄北，该段属客专还是老线待核,页面经停站列表,该车在目标区间可能缺站，绘制需标缺口,uncertainties §6,open
+RV-017,warn,route_pending,C800,,,,经石家庄北，该段属客专还是老线待核,页面经停站列表,该车在目标区间可能缺站，绘制需标缺口,uncertainties §6,open
+RV-018,warn,route_pending,D1095,,,,页面仅列阳泉东 07:09 → 太原南 08:36 两站，是否经阳泉北待核,页面经停站列表,该车在目标区间可能缺站，绘制需标缺口,uncertainties §6,open
+RV-019,warn,route_pending,D1096,,,,太原南 09:25 → 太原 09:36/09:41 → 阳泉东 11:15，页面未列阳泉北，衔接线路待核,页面经停站列表,该车在目标区间可能缺站，绘制需标缺口,uncertainties §6,open
+RV-020,warn,route_pending,S954,,,,阳泉东 10:40 → 阳泉北 11:26（46 分钟，其余市郊车均 28 分钟），疑待避/慢行，待核,页面经停站列表,该车在目标区间可能缺站，绘制需标缺口,uncertainties §6,open
+RV-021,warn,source_conflict,G2637,8,滨海北,,G2637 页作「滨海北 16:52/16:54」，G2640 页作「滨海西 16:48/16:50」，站名与时刻均不一致,CSV 值：16:52/16:54；CSV 按主录页 G2637 录入；未静默取舍，交 12306 核定,该站站名/时刻存疑，图上需标注待核,uncertainties §3,open
+RV-022,warn,station_naming,"K585, K587",,昔阳,,CSV 站名「昔阳」，车站骨架作「大寨(昔阳)」，未擅自归一,"涉及车次：K585, K587",纵轴站名需与骨架统一后再绘图,docs/stations.md 二、阳大铁路,open
+RV-023,excluded,excluded_suspended,D1617,,,,停运或图内不开行，未录入,10/20–28 SUSPENDED、10/29 起 UNKNOWN,不在本批数据中,uncertainties §2,open
+RV-024,excluded,excluded_suspended,D1618,,,,停运或图内不开行，未录入,14 天全 SUSPENDED,不在本批数据中,uncertainties §2,open
+RV-025,excluded,excluded_suspended,D1619,,,,停运或图内不开行，未录入,14 天全 SUSPENDED,不在本批数据中,uncertainties §2,open
+RV-026,excluded,excluded_suspended,D1620,,,,停运或图内不开行，未录入,10/20–28 SUSPENDED、10/29 起 UNKNOWN,不在本批数据中,uncertainties §2,open
+RV-027,excluded,excluded_suspended,G4693,,,,停运或图内不开行，未录入,去哪儿运行图 10/20–11/02 每日全标停,不在本批数据中,uncertainties §2,open
+RV-028,excluded,excluded_unverified,D266,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,H 分片：去哪儿 404；携程无数据,不在本批数据中，图上无此车,uncertainties §1,open
+RV-029,excluded,excluded_unverified,D1681,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,E2 分片：去哪儿 404；携程无数据（ip.cn 线索不采信）,不在本批数据中，图上无此车,uncertainties §1,open
+RV-030,excluded,excluded_unverified,D1682,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,E2 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-031,excluded,excluded_unverified,D1683,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,E2 分片：同上；疑与 D1682 同车换号,不在本批数据中，图上无此车,uncertainties §1,open
+RV-032,excluded,excluded_unverified,D1684,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,E2 分片：同上；疑与 D1681 同车换号,不在本批数据中，图上无此车,uncertainties §1,open
+RV-033,excluded,excluded_unverified,D4216,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,D 分片：去哪儿 404；携程 JS 壳无时刻,不在本批数据中，图上无此车,uncertainties §1,open
+RV-034,excluded,excluded_unverified,D4217,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,D 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-035,excluded,excluded_unverified,G794,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,B 分片：去哪儿死链；携程无数据；疑 G791 套跑切换号,不在本批数据中，图上无此车,uncertainties §1,open
+RV-036,excluded,excluded_unverified,G3767,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,C 分片：去哪儿 link dead；携程 parse error,不在本批数据中，图上无此车,uncertainties §1,open
+RV-037,excluded,excluded_unverified,G3768,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,C 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-038,excluded,excluded_unverified,G3769,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,C 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-039,excluded,excluded_unverified,G3770,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,C 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-040,excluded,excluded_unverified,K4585,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F1 分片：去哪儿 404；携程空壳；可能临客/季节性/已停运,不在本批数据中，图上无此车,uncertainties §1,open
+RV-041,excluded,excluded_unverified,K4586,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F1 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-042,excluded,excluded_unverified,K4587,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F1 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-043,excluded,excluded_unverified,K4588,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F1 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-044,excluded,excluded_unverified,T6,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F2 分片：去哪儿 404；携程 trainStopList=[],不在本批数据中，图上无此车,uncertainties §1,open
+RV-045,excluded,excluded_unverified,T7,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F2 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-046,excluded,excluded_unverified,T8,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F2 分片：同上,不在本批数据中，图上无此车,uncertainties §1,open
+RV-047,excluded,excluded_unverified,Z69,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F2 分片：同上；勿与 D69 混淆,不在本批数据中，图上无此车,uncertainties §1,open
+RV-048,excluded,excluded_unverified,Z70,,,,未能核实，未进本批 CSV；禁止用 ip.cn 等线索时刻填充,F2 分片：同上；勿与 D70 混淆,不在本批数据中，图上无此车,uncertainties §1,open

@@ -1,0 +1,306 @@
+/*!
+ * record.css — 录制模式页面样式
+ * 目标：全屏铺满运行图，控件悬浮且可自动隐去，录制时画面干净。
+ */
+
+:root {
+  --ink: #1f2329;
+  --ink-2: #4a4f57;
+  --ink-3: #8b919a;
+  --line: #e6e8eb;
+  --paper: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 控件与鼠标一起隐去，录制时不留光标 */
+body.is-idle { cursor: none; }
+
+.stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  gap: 8px;
+}
+
+.view {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.view[hidden] { display: none; }
+.view > div { height: 100%; }
+.view svg { display: block; }
+
+/* 线路视图：逻辑 viewBox 按 ZOOM 缩小，CSS 拉伸回容器 —— 全部元素等比放大（矢量无损） */
+#viewLine svg { width: 100%; height: 100%; }
+
+/* Marey 光标自带的小时刻与左上角大时刻重复，藏标签留竖线 */
+#viewMarey .mc-cursor rect,
+#viewMarey .mc-cursor text { display: none; }
+
+/* 线路图内建图例与大时刻重叠，隐藏（右上角水印有等价说明） */
+#viewLine .ld-legend { display: none; }
+
+/* 轨道再压轴加粗（逻辑坐标下的线宽，显示时再乘 ZOOM） */
+#viewLine .ld-track--main { stroke-width: 9; }
+#viewLine .ld-track--branch { stroke-width: 7; }
+#viewLine .ld-track--connecting { stroke-width: 5; }
+
+/* 左上角大号当前时刻：常驻显示，不随控制条隐去 */
+.bigtime {
+  position: fixed;
+  left: 26px;
+  top: 14px;
+  z-index: 15;
+  pointer-events: none;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--ink);
+}
+
+.bigtime b {
+  font-size: 72px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bigtime i {
+  font-style: normal;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+/* 右上角水印（左上角留给 Marey 自带图例，避免重叠） */
+.corner {
+  position: fixed;
+  right: 22px;
+  top: 14px;
+  z-index: 10;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+  pointer-events: none;
+  text-align: right;
+  transition: opacity 220ms ease;
+}
+
+.corner b {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.corner.is-hidden { opacity: 0; }
+
+/* 底部播放器 */
+.hud {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px 8px 9px;
+  background: rgba(23, 25, 29, 0.9);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 13px;
+  z-index: 30;
+  user-select: none;
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.hud.is-hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px);
+  pointer-events: none;
+}
+
+.hud button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  line-height: 1;
+  padding: 6px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.hud button:hover { background: rgba(255, 255, 255, 0.14); }
+
+.hud .play {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #17191d;
+  font-size: 13px;
+}
+
+.hud .play:hover { background: #e9eaec; }
+
+.clock {
+  font-variant-numeric: tabular-nums;
+  min-width: 86px;
+  letter-spacing: 0.01em;
+}
+
+.clock i {
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.42);
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.seek {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 420px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.22);
+  outline: none;
+  cursor: pointer;
+}
+
+.seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.seek::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0;
+}
+
+.hud select {
+  appearance: none;
+  border: 0;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.hud select option { color: #17191d; }
+
+.seg {
+  display: flex;
+  padding: 2px;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+
+.seg button {
+  font-size: 12px;
+  padding: 5px 10px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.seg button[aria-pressed="true"] {
+  background: #fff;
+  color: #17191d;
+}
+
+.hud .icon { font-size: 14px; padding: 6px 8px; }
+
+/* 录制页线条加粗、提高不透明度：1600px 以上全屏时 1.15px 经视频压缩会发虚 */
+#viewMarey .mc-series {
+  stroke-width: 1.7;
+  opacity: 0.74;
+}
+
+/* 加载/错误 */
+.fatal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ink-2);
+  text-align: center;
+  background: var(--paper);
+  z-index: 50;
+}
+
+.fatal code {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 8px;
+  background: #f2f3f5;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .seek { width: 160px; }
+  .hud { gap: 8px; padding-right: 10px; }
+  .clock { min-width: 70px; font-size: 12px; }
+}
+
+/* 六大枢纽站：站名再放大 100%（逻辑 24px × ZOOM3 = 72px 显示）+ 按线路主题上色
+   太原/太原南=深蓝，石家庄/石家庄北=深绿，阳泉北/阳泉东=深红（沿用阳泉北高亮色） */
+#viewLine .ld-station[data-station="太原"] > .ld-station-label,
+#viewLine .ld-station[data-station="太原南"] > .ld-station-label,
+#viewLine .ld-station[data-station="阳泉北"] > .ld-station-label,
+#viewLine .ld-station[data-station="阳泉东"] > .ld-station-label,
+#viewLine .ld-station[data-station="石家庄"] > .ld-station-label,
+#viewLine .ld-station[data-station="石家庄北"] > .ld-station-label {
+  font-size: 24px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 7;
+}
+
+#viewLine .ld-station[data-station="太原"] > .ld-station-label,
+#viewLine .ld-station[data-station="太原南"] > .ld-station-label { fill: #1e3a8a; }
+
+#viewLine .ld-station[data-station="石家庄"] > .ld-station-label,
+#viewLine .ld-station[data-station="石家庄北"] > .ld-station-label { fill: #14532d; }
+
+#viewLine .ld-station[data-station="阳泉北"] > .ld-station-label,
+#viewLine .ld-station[data-station="阳泉东"] > .ld-station-label { fill: #c2410c; }
+
+/* 线段上的车次号放大 100%（逻辑 9.5→19px，显示 57px；白描边晕圈已内建） */
+#viewLine .ld-train-label { font-size: 19px; }

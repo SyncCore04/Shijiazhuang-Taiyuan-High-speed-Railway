@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>线路示意与列车位置 · 石太客专 + 阳大铁路（阶段5 演示）</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>线路示意与列车位置 · 石太客专 + 阳大铁路</h1>
+    <span class="badge">全部时刻需 12306 官方复核</span>
+    <span class="sub">阶段5 模块演示 · 契约 v1.0.0 · 现行图 2026-10-20</span>
+  </header>
+
+  <section class="stats" id="stats" aria-label="数据概览"></section>
+
+  <section class="panel controls" aria-label="时间输入">
+    <div class="group" style="flex:1 1 420px">
+      <label for="timeSlider">临时时间滑杆</label>
+      <input id="timeSlider" type="range" min="0" max="2700" step="1" value="600">
+      <span class="time-readout" id="timeReadout">10:00</span>
+    </div>
+    <div class="group">
+      <button type="button" id="minus1">− 1 分钟</button>
+      <button type="button" id="plus1">+ 1 分钟</button>
+    </div>
+    <div class="group" role="group" aria-label="方向筛选">
+      <button type="button" data-dir="all" aria-pressed="true">全部</button>
+      <button type="button" data-dir="up" aria-pressed="false">仅上行</button>
+      <button type="button" data-dir="down" aria-pressed="false">仅下行</button>
+    </div>
+  </section>
+
+  <section class="chart-shell">
+    <div id="diagram" aria-live="polite"></div>
+  </section>
+  <p class="hint">
+    位置由 <code>setLineTime(absMinute)</code> 驱动：区间内按起终站坐标线性插值，停站期间固定在车站。
+    本页不是播放器，时间推进由阶段6 统一负责；模块内部没有任何 <code>requestAnimationFrame</code>。
+  </p>
+
+  <section class="panel">
+    <div class="detail" id="selection" aria-live="polite">
+      <div class="empty">点击图中任一圆点/菱形查看车次信息。</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+      <strong style="font-size:13px">此刻在通道内的车次</strong>
+      <span class="hint" id="activeCount" style="margin:0">0 车</span>
+    </div>
+    <div id="activeList" class="active-list"></div>
+  </section>
+
+  <footer class="notes">
+    数据来源：去哪儿单车现行页（queryDate 2026-10-20，访问 2026-10-19），第三方聚合，<strong>全部时刻需 12306 官方复核</strong>。
+    横坐标为示意站序，不是地理比例；石家庄北与石家庄、太原南与太原共用站点位置。6 车因跨日未定不参与绘制。<br>
+    本地预览：<code>python -m http.server 8000</code> → <code>http://localhost:8000/line-demo.html</code>；<code>file://</code> 下 fetch 会被拦截。
+  </footer>
+</div>
+
+<script src="js/line-diagram.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var DATA_URL = 'data/processed/shita_timetable_2026-10-20_data-v1.json';
+  var diagramEl = document.getElementById('diagram');
+  var statsEl = document.getElementById('stats');
+  var selectionEl = document.getElementById('selection');
+  var activeListEl = document.getElementById('activeList');
+  var activeCountEl = document.getElementById('activeCount');
+  var slider = document.getElementById('timeSlider');
+  var readout = document.getElementById('timeReadout');
+
+  function fatal(message, cmd) {
+    diagramEl.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'fatal';
+    box.innerHTML = message + (cmd ? '<br><code>' + cmd + '</code>' : '');
+    diagramEl.appendChild(box);
+  }
+
+  if (!window.LineDiagram) {
+    fatal('未加载到 js/line-diagram.js，请检查文件路径。');
+    return;
+  }
+
+  function fmt(m) {
+    m = Math.round(m);
+    var day = Math.floor(m / 1440);
+    var rem = ((m % 1440) + 1440) % 1440;
+    var hh = Math.floor(rem / 60), mm = rem % 60;
+    var t = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
+    return day > 0 ? t + '（次日）' : t;
+  }
+
+  var STATE_TEXT = {
+    moving: '运行', stopped: '停站', terminal: '终到', pending: '未发车', between: '离开通道', left: '离开通道', off_corridor: '不在通道'
+  };
+
+  fetch(DATA_URL)
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (data) {
+      if (data.meta.data_kind !== 'real') {
+        fatal('该文件不是真实数据（data_kind=' + data.meta.data_kind + '）。');
+        return;
+      }
+
+      var st = data.stats;
+      statsEl.innerHTML = [
+        [st.trains, '车次'], [st.usable_trains, '可绘（校验通过）'],
+        [st.blocked_trains, '阻断（不绘制）'], ['—', '此刻在线']
+      ].map(function (it, i) {
+        return '<div class="stat"><b' + (i === 3 ? ' id="activeStat"' : '') + '>' + it[0] + '</b><span>' + it[1] + '</span></div>';
+      }).join('');
+
+      var diagram = window.LineDiagram.initLineDiagram(diagramEl, data, { height: 400 });
+      var domain = [data.meta.coverage.abs_minute_min > 60 ? 0 : 0, 2700];
+      slider.min = '0'; slider.max = String(domain[1]);
+      var initial = 600;
+      slider.value = String(initial);
+      readout.textContent = fmt(initial);
+
+      function refresh(t) {
+        diagram.setLineTime(t);
+        readout.textContent = fmt(t);
+        var active = diagram.getActiveTrains();
+        activeCountEl.textContent = active.length + ' 车';
+        var stat = document.getElementById('activeStat');
+        if (stat) stat.textContent = String(active.length);
+        if (!active.length) {
+          activeListEl.innerHTML = '<div class="empty">此刻没有列车位于通道内。</div>';
+          return;
+        }
+        active.sort(function (a, b) {
+          return (a.fromStation || '').localeCompare(b.fromStation || '');
+        });
+        activeListEl.innerHTML = '<table class="active-table"><thead><tr>' +
+          '<th>车次</th><th>方向</th><th>状态</th><th>位置</th></tr></thead><tbody>' +
+          active.map(function (a) {
+            var where = a.state === 'stopped' ? a.station
+              : a.state === 'terminal' ? a.station
+              : (a.fromStation + ' → ' + a.toStation);
+            return '<tr data-train-id="' + a.trainId + '"><td>' + a.trainNo + '</td><td>' +
+              (a.direction === 'up' ? '上行' : a.direction === 'down' ? '下行' : '未知') + '</td><td>' +
+              (STATE_TEXT[a.state] || a.state) + '</td><td>' + where + '</td></tr>';
+          }).join('') + '</tbody></table>';
+      }
+
+      refresh(initial);
+
+      slider.addEventListener('input', function () { refresh(Number(slider.value)); });
+      document.getElementById('minus1').addEventListener('click', function () {
+        var v = Math.max(0, Number(slider.value) - 1); slider.value = String(v); refresh(v);
+      });
+      document.getElementById('plus1').addEventListener('click', function () {
+        var v = Math.min(domain[1], Number(slider.value) + 1); slider.value = String(v); refresh(v);
+      });
+
+      var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-dir]'));
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+          var dir = btn.getAttribute('data-dir');
+          if (dir === 'all') { diagram.setVisibleTrains(null); }
+          else {
+            diagram.setVisibleTrains(data.trains.filter(function (t) {
+              return t.direction === dir && t.validation.usable_for_frontend;
+            }).map(function (t) { return t.train_id; }));
+          }
+          refresh(Number(slider.value));
+        });
+      });
+
+      diagramEl.addEventListener('trainselect', function (ev) {
+        var d = ev.detail || {};
+        var train = data.trains.filter(function (t) { return t.train_id === d.trainId; })[0];
+        if (!train) return;
+        diagram.setSelectedTrain(d.trainId);
+        var dirText = train.direction === 'up' ? '上行 up' : train.direction === 'down' ? '下行 down' : '未知 unknown';
+        var statusText = train.validation.status === 'validated' ? '已校验'
+          : train.validation.status === 'validated_with_notes' ? '已校验（带待核标注）' : '待复核';
+        var warnings = (data.warnings || []).filter(function (w) { return w.train_id === train.train_id; });
+        selectionEl.innerHTML =
+          '<div><span class="k">车次</span><span class="v">' + train.train_no + '</span></div>' +
+          '<div><span class="k">方向</span><span class="v">' + dirText + '</span></div>' +
+          '<div><span class="k">类型</span><span class="v">' + train.train_type + '</span></div>' +
+          '<div><span class="k">数据状态</span><span class="v">' + statusText + '</span></div>' +
+          '<div><span class="k">始发 → 终到</span><span class="v">' + train.origin + ' → ' + train.terminal + '</span></div>' +
+          '<div><span class="k">当前状态</span><span class="v">' +
+            (function () {
+              var st = (diagram.getTrainStates().filter(function (x) { return x.trainNo === train.train_no; })[0] || {}).state;
+              return STATE_TEXT[st] || st || '—';
+            })() +
+          '</span></div>' +
+          (warnings.length ? '<div style="grid-column:1/-1"><span class="k">待核</span><span class="v">' +
+            warnings.map(function (w) { return w.code; }).join('、') + '</span></div>' : '');
+      });
+
+      window.__lineDemo = { diagram: diagram, data: data };
+    })
+    .catch(function (err) {
+      fatal('无法加载数据：' + err.message + '。浏览器在 file:// 下禁止 fetch，请用本地 HTTP 打开。',
+        'python -m http.server 8000   →   http://localhost:8000/line-demo.html');
+    });
+})();
+</script>
+</body>
+</html>

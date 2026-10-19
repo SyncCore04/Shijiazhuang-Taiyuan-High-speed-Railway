@@ -1,0 +1,8 @@
+review_id,severity,category,train_no,station_order,station,row_number,issue,evidence,frontend_impact,doc_ref,status
+RV-001,block,dep_before_arr,K214,13,石家庄北,1462,石家庄北 出发 00:07 早于到达 23:57,,见 issue 描述,脚本检测,open
+RV-002,block,dep_before_arr,K546,16,西安,1524,西安 出发 00:05 早于到达 23:23,,见 issue 描述,脚本检测,open
+RV-003,block,dep_before_arr,K892,4,芜湖,1820,芜湖 出发 00:01 早于到达 23:57,,见 issue 描述,脚本检测,open
+RV-004,block,dep_before_arr,T175,11,定边,1938,定边 出发 00:01 早于到达 23:58,,见 issue 描述,脚本检测,open
+RV-005,warn,catalog_conflict,"K585, K587",,平定,,车站骨架将「平定」标为待核（改建站，南段），但 CSV 中 K585/K587 有停站时刻,docs/stations.md 二、阳大铁路 vs CSV 站记录,阳大线南段是否纳入绘图需确认,docs/stations.md 二,open
+RV-006,warn,catalog_conflict,"K585, K587",,昔阳,,车站骨架将「大寨(昔阳)」标为待核/未见现行客运，但 CSV 以「昔阳」列有 K585/K587 停站时刻,docs/stations.md 二、阳大铁路 vs CSV 站记录,阳大线南段是否纳入绘图需确认,docs/stations.md 二,open
+RV-007,warn,station_naming,"K585, K587",,昔阳,,CSV 站名「昔阳」，车站骨架作「大寨(昔阳)」，未擅自归一,"涉及车次：K585, K587",纵轴站名需与骨架统一后再绘图,docs/stations.md 二、阳大铁路,open
