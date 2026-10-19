@@ -14,7 +14,8 @@
 </div>
 
 <div class="bigtime" id="bigtime"><b id="bigClock">--:--</b><i id="bigDay"></i></div>
-<div class="corner" id="corner"><b>石太客专 + 阳大铁路</b> · 运行图 2026-10-20 · 红=上行 / 蓝=下行</div>
+<div class="bigtitle">石太高速铁路运行图可视化Alpha</div>
+<div class="corner" id="corner"><b>石太客专 + 阳大铁路</b> · 运行图 2026-10-20 · 红圆=上行 / 蓝菱=下行</div>
 
 <div class="hud" id="hud">
   <button type="button" class="play" id="playBtn" aria-label="播放 / 暂停">▶</button>
@@ -56,7 +57,7 @@
   if (!(TO > FROM)) { FROM = 180; TO = 1920; }
   var START = q.has('t') ? Math.min(TO, Math.max(FROM, num(q.get('t'), FROM))) : FROM;
   var MODE = ['marey', 'line', 'both'].indexOf(q.get('view')) >= 0 ? q.get('view') : 'line';
-  var ZOOM = Math.max(1, num(q.get('zoom'), 3));   // 线路视图矢量放大倍数
+  var ZOOM = Math.max(1, num(q.get('zoom'), 1.44)); // 线路视图矢量放大倍数（1.44 = 3 倍版的 48%）
   var SHOW_BIGTIME = q.get('bigtime') !== '0';      // 左上角大号当前时刻
   var AUTOPLAY = q.get('autoplay') === '1';
   var SHOW_CORNER = q.get('corner') !== '0';

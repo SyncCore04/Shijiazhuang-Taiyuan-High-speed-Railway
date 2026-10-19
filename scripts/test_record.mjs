@@ -15,6 +15,25 @@ const { chromium } = require('playwright-core');
   await page.goto('http://127.0.0.1:8000/record.html?t=600', { waitUntil: 'networkidle' });
   await page.waitForTimeout(400);
   await page.screenshot({ path: '.workbuddy/shots/record-line-day.png' });
+  await page.goto('http://127.0.0.1:8000/record.html?t=270', { waitUntil: 'networkidle' });
+  await page.waitForTimeout(800);
+  await page.mouse.move(900, 500);
+  await page.screenshot({ path: '.workbuddy/shots/record-dawn.png' });
+  const dawn = await page.evaluate(() => {
+    const LD = window.LineDiagram;
+    const layout = window.__rec.diagram().getLayout();
+    const byTrain = {};
+    window.__rec.data.segments.forEach(g => { (byTrain[g.train_id] = byTrain[g.train_id] || []).push(g); });
+    const r = {};
+    ['K1805', 'K978'].forEach(no => {
+      const t = window.__rec.data.trains.find(x => x.train_no === no);
+      const pack = LD.buildLegs(t, layout, byTrain[t.train_id] || []);
+      const p = LD.computePosition(pack, 270);
+      r[no] = { state: p.state, x: p.x && Math.round(p.x), y: p.y && Math.round(p.y) };
+    });
+    return r;
+  });
+  console.log('dawn-270:', JSON.stringify(dawn));
   await page.goto('http://127.0.0.1:8000/record.html', { waitUntil: 'networkidle' });
   await page.waitForTimeout(900);
   await page.mouse.move(900, 500);

@@ -307,8 +307,22 @@
             station: leg.fromStation
           };
         }
-        // 绕行区间（该车实际经由骨架外线路）：不显示车底，避免在逻辑线上被同向快车穿越
-        if (leg.detour) return { state: 'detour', x: null, y: null };
+        // 绕行区间（该车实际经由骨架外线路，如普速车走石太老线）：半透明幽灵车。
+        // 位置仍按真实时刻插值，但透明度低、不参与可见车次统计，
+        // 既不与同向快车发生穿越观感，也不会“发车后凭空消失”。
+        if (leg.detour) {
+          var pd = (t - leg.start) / (leg.end - leg.start);
+          pd = Math.max(0, Math.min(1, pd));
+          var ptd = pointAlong(leg.path, pd * leg.pathLength);
+          var q0 = leg.path[0], q1 = leg.path[leg.path.length - 1];
+          var qdx = q1.x - q0.x, qdy = q1.y - q0.y, ql = Math.hypot(qdx, qdy) || 1;
+          return {
+            state: 'detour', x: ptd.x, y: ptd.y,
+            nx: qdy / ql, ny: -qdx / ql,
+            legIndex: i, segmentId: leg.segmentId, progress: pd,
+            fromStation: leg.fromStation, toStation: leg.toStation
+          };
+        }
         var p = (t - leg.start) / (leg.end - leg.start);
         p = Math.max(0, Math.min(1, p));
         var pt = pointAlong(leg.path, p * leg.pathLength);
@@ -632,7 +646,7 @@
         if (!g) return;
         var pos = computePosition(tr.pack, absMinute);
         var visibleByState = pos.state === 'moving' || pos.state === 'stopped' ||
-          (pos.state === 'terminal' && opts.endBehavior === 'hold');
+          pos.state === 'detour' || (pos.state === 'terminal' && opts.endBehavior === 'hold');
         var show = visibleByState && isEnabled(tr);
         if (!show) {
           g.style.display = 'none';

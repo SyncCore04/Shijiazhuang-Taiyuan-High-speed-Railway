@@ -304,3 +304,18 @@ body.is-idle { cursor: none; }
 
 /* 线段上的车次号放大 100%（逻辑 9.5→19px，显示 57px；白描边晕圈已内建） */
 #viewLine .ld-train-label { font-size: 19px; }
+
+/* 顶部大标题（录制片头） */
+.bigtitle {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  pointer-events: none;
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: 6px;
+  color: var(--ink);
+  white-space: nowrap;
+}
